@@ -122,7 +122,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
       </div>
 
       {/* Right form panel */}
-      <div className="flex-1 overflow-y-auto flex flex-col items-center justify-start sm:justify-center p-5 sm:p-8">
+      <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center p-5 sm:p-8">
         <div className="w-full max-w-[420px] py-2 sm:py-0">
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 mb-5 sm:mb-8">
@@ -142,7 +142,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
 
           <div className="flex items-baseline justify-between gap-3 mb-1">
             <h2
-              className="text-[28px] text-clover-dark font-normal leading-tight"
+              className="text-[22px] sm:text-[28px] text-clover-dark font-normal leading-tight"
               style={{ fontFamily: "DM Serif Display, serif" }}
             >
               {s.heading}
@@ -170,9 +170,9 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
           </div>
           <p className="text-[13px] text-clover-muted mb-5 sm:mb-8">{s.subtitle}</p>
 
-          <form onSubmit={plans ? handleSubmit : handleFindPlans} className="flex flex-col gap-5">
-            {/* Name row */}
-            <div className="flex gap-3">
+          <form onSubmit={plans ? handleSubmit : handleFindPlans} className="flex flex-col gap-3 sm:gap-5">
+            {/* Name row — stacked on mobile, side-by-side on sm+ */}
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1 flex flex-col gap-1.5">
                 <label className="text-[11px] text-clover-mid uppercase tracking-wider font-medium">
                   {s.firstName}
@@ -182,7 +182,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder={s.firstNamePlaceholder}
-                  className="bg-white border border-clover-border rounded-xl px-4 py-3 text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
+                  className="bg-white border border-clover-border rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
                   autoFocus
                 />
               </div>
@@ -195,7 +195,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder={s.lastNamePlaceholder}
-                  className="bg-white border border-clover-border rounded-xl px-4 py-3 text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
+                  className="bg-white border border-clover-border rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
                 />
               </div>
             </div>
@@ -216,12 +216,12 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
                     if (plans) { setPlans(null); setSelectedPlanId(null); setPlansError(null); }
                   }}
                   placeholder="07030"
-                  className="flex-1 bg-white border border-clover-border rounded-xl px-4 py-3 text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
+                  className="flex-1 bg-white border border-clover-border rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
                 />
                 <button
                   type="submit"
                   disabled={!canFindPlans || loading}
-                  className="px-4 py-3 bg-clover-green text-white rounded-xl text-[13px] font-medium hover:bg-clover-light disabled:opacity-40 disabled:cursor-not-allowed transition-all whitespace-nowrap shadow-[0_1px_3px_rgba(82,183,136,0.4)]"
+                  className="px-3 sm:px-4 py-2.5 sm:py-3 bg-clover-green text-white rounded-xl text-[13px] font-medium hover:bg-clover-light disabled:opacity-40 disabled:cursor-not-allowed transition-all whitespace-nowrap shadow-[0_1px_3px_rgba(82,183,136,0.4)]"
                 >
                   {loading ? s.searching : s.findPlans}
                 </button>
@@ -247,7 +247,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
                         key={p.id}
                         type="button"
                         onClick={() => setSelectedPlanId(p.id)}
-                        className={`w-full text-left rounded-xl border px-4 py-3 transition-all flex items-center justify-between gap-3 ${
+                        className={`w-full text-left rounded-xl border px-3 py-2.5 sm:px-4 sm:py-3 transition-all flex items-center justify-between gap-2 sm:gap-3 ${
                           isSelected
                             ? "border-clover-green bg-[rgba(82,183,136,0.06)] shadow-[0_0_0_2px_rgba(82,183,136,0.25)]"
                             : "border-clover-border bg-white hover:border-clover-light"
