@@ -71,7 +71,8 @@ async function callFormularySearch(input: Record<string, unknown>, planId?: stri
   params.set("_count", String(input.page_size ?? 5));
   if (planId) params.set("planId", planId);
 
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"}/api/formulary?${params}`;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  const url = `${baseUrl}/api/formulary?${params}`;
   const res = await fetch(url);
 
   if (!res.ok) {
@@ -109,7 +110,8 @@ async function callProviderSearch(input: Record<string, unknown>): Promise<strin
     (input.provider_types as string[]).forEach((t) => params.append("provider_types", t));
   }
 
-  const url = `${process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"}/api/providers?${params}`;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  const url = `${baseUrl}/api/providers?${params}`;
   const res = await fetch(url);
 
   if (!res.ok) {

@@ -131,7 +131,7 @@ export function Chat({ onQuickAction, member, language, onLanguageChange }: Chat
             className="text-[22px] text-clover-dark font-normal leading-tight"
             style={{ fontFamily: "DM Serif Display, serif" }}
           >
-            Ask{" "}
+            {strings.askClovis}{" "}
             <em className="text-clover-green" style={{ fontStyle: "italic" }}>
               Clovis
             </em>
@@ -140,24 +140,9 @@ export function Chat({ onQuickAction, member, language, onLanguageChange }: Chat
             Hi, {member.name.split(" ")[0]} · {member.plan}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          {/* Language selector */}
-          <div className="flex items-center gap-1 text-[12px] text-clover-mid">
-            <span>🌐</span>
-            <select
-              value={language}
-              onChange={(e) => handleLanguageChange(e.target.value as Language)}
-              className="bg-transparent border-none outline-none cursor-pointer text-[12px] text-clover-mid font-medium pr-1"
-            >
-              {LANGUAGES.map((l) => (
-                <option key={l.code} value={l.code}>{l.nativeLabel}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center gap-1.5 bg-clover-mint border border-clover-border px-3.5 py-1.5 rounded-full text-[12px] text-clover-green font-medium">
-            <span className="w-[7px] h-[7px] bg-clover-light rounded-full animate-pulse-dot" />
-            {strings.available}
-          </div>
+        <div className="flex items-center gap-1.5 bg-clover-mint border border-clover-border px-3.5 py-1.5 rounded-full text-[12px] text-clover-green font-medium">
+          <span className="w-[7px] h-[7px] bg-clover-light rounded-full animate-pulse-dot" />
+          {strings.available}
         </div>
       </div>
 
@@ -175,6 +160,25 @@ export function Chat({ onQuickAction, member, language, onLanguageChange }: Chat
           disabled={textIdx === TEXT_SIZES.length - 1}
           className="text-[13px] w-6 h-6 flex items-center justify-center border rounded-md transition-all font-sans bg-white border-clover-border text-clover-mid hover:bg-clover-pale hover:border-clover-light hover:text-clover-green disabled:opacity-30 disabled:cursor-not-allowed"
         >+</button>
+
+        {/* Language dropdown */}
+        <div className="ml-auto relative">
+          <select
+            value={language}
+            onChange={(e) => handleLanguageChange(e.target.value as Language)}
+            className="appearance-none bg-white border border-clover-border rounded-lg pl-2.5 pr-7 py-1 text-[11px] text-clover-mid font-medium outline-none cursor-pointer hover:border-clover-light focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
+          >
+            {LANGUAGES.map((l) => (
+              <option key={l.code} value={l.code}>{l.flag} {l.nativeLabel}</option>
+            ))}
+          </select>
+          <svg
+            className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-clover-muted"
+            viewBox="0 0 12 12" fill="none"
+          >
+            <path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
       </div>
 
       {/* Messages */}
@@ -185,6 +189,7 @@ export function Chat({ onQuickAction, member, language, onLanguageChange }: Chat
             message={msg}
             onChipClick={handleChipClick}
             initials={member.name.split(" ").map((w) => w[0]).join("").toUpperCase()}
+            escalate={{ text: strings.escalateText, call: strings.escalateCall, hours: strings.escalateHours }}
           />
         ))}
         {loading && <TypingIndicator />}
@@ -203,6 +208,8 @@ export function Chat({ onQuickAction, member, language, onLanguageChange }: Chat
         onChange={setInput}
         onSend={handleSend}
         disabled={loading}
+        placeholder={strings.inputPlaceholder}
+        hint={strings.inputHint}
       />
     </div>
   );

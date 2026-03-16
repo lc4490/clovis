@@ -1,6 +1,6 @@
 "use client";
 
-import { QUICK_ACTIONS, PHONE_NUMBER, UI_STRINGS } from "@/lib/constants";
+import { PHONE_NUMBER, UI_STRINGS } from "@/lib/constants";
 import type { Language } from "@/lib/constants";
 import type { Member } from "@/types";
 
@@ -41,7 +41,7 @@ export function Sidebar({ onQuickAction, member, language = "en" }: SidebarProps
           </span>
         </div>
         <p className="text-white/55 text-[11px] uppercase tracking-widest ml-[42px] font-normal">
-          Member Portal
+          {strings.memberPortal}
         </p>
       </div>
 
@@ -68,7 +68,7 @@ export function Sidebar({ onQuickAction, member, language = "en" }: SidebarProps
       </p>
 
       <nav className="flex flex-col gap-0.5 relative z-20">
-        {QUICK_ACTIONS.map(({ icon, label, prompt }) => (
+        {strings.quickActions.map(({ icon, label, prompt }) => (
           <button
             key={label}
             onClick={() => onQuickAction(prompt)}

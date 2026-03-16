@@ -21,7 +21,7 @@ export default function Home() {
   }, []);
 
   if (!member) {
-    return <SetupPage onComplete={setMember} />;
+    return <SetupPage onComplete={setMember} language={language} onLanguageChange={setLanguage} />;
   }
 
   return (

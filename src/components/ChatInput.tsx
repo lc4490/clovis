@@ -12,9 +12,11 @@ interface ChatInputProps {
   onChange: (v: string) => void;
   onSend: () => void;
   disabled: boolean;
+  placeholder?: string;
+  hint?: string;
 }
 
-export function ChatInput({ value, onChange, onSend, disabled }: ChatInputProps) {
+export function ChatInput({ value, onChange, onSend, disabled, placeholder, hint }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const autoResize = useCallback(() => {
@@ -48,7 +50,7 @@ export function ChatInput({ value, onChange, onSend, disabled }: ChatInputProps)
           value={value}
           onChange={handleChange}
           onKeyDown={handleKey}
-          placeholder="Type your question here…"
+          placeholder={placeholder ?? "Type your question here…"}
           rows={1}
           disabled={disabled}
           className="flex-1 bg-transparent border-none outline-none text-[15px] text-clover-dark placeholder:text-clover-muted resize-none max-h-[120px] min-h-[24px] leading-relaxed font-sans disabled:opacity-50"
@@ -72,7 +74,7 @@ export function ChatInput({ value, onChange, onSend, disabled }: ChatInputProps)
         </button>
       </div>
       <p className="text-[10.5px] text-clover-muted text-center mt-1.5 opacity-70">
-        Enter to send · Shift+Enter for new line
+        {hint ?? "Enter to send · Shift+Enter for new line"}
       </p>
     </div>
   );

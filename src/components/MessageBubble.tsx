@@ -4,10 +4,17 @@ import { parseSegments, parseBold, type InlinePart } from "@/lib/utils";
 import { PHONE_NUMBER } from "@/lib/constants";
 import type { Message } from "@/types";
 
+interface EscalateStrings {
+  text: string;
+  call: string;
+  hours: string;
+}
+
 interface MessageBubbleProps {
   message: Message;
   onChipClick: (text: string) => void;
   initials?: string;
+  escalate?: EscalateStrings;
 }
 
 function InlineText({ text }: { text: string }) {
@@ -33,7 +40,7 @@ function InlineText({ text }: { text: string }) {
   );
 }
 
-function BotBubble({ message, onChipClick }: MessageBubbleProps) {
+function BotBubble({ message, onChipClick, escalate }: MessageBubbleProps) {
   const segments = parseSegments(message.content);
 
   return (
@@ -81,14 +88,14 @@ function BotBubble({ message, onChipClick }: MessageBubbleProps) {
           <div className="mt-3 bg-amber-50 border border-amber-200 rounded-[10px] px-3.5 py-3 text-[13px] text-amber-900 flex gap-2.5 items-center">
             <span className="text-base">📞</span>
             <span>
-              A live agent can help with this.{" "}
+              {escalate?.text ?? "A live agent can help with this."}{" "}
               <a
                 href={`tel:${PHONE_NUMBER.replace(/-/g, "")}`}
                 className="font-semibold underline underline-offset-2 hover:text-amber-700 transition-colors"
               >
-                Call {PHONE_NUMBER}
+                {escalate?.call ?? "Call"} {PHONE_NUMBER}
               </a>{" "}
-              <span className="text-amber-700">(Mon–Fri, 8am–8pm ET)</span>
+              <span className="text-amber-700">{escalate?.hours ?? "(Mon–Fri, 8am–8pm ET)"}</span>
             </span>
           </div>
         )}
@@ -110,9 +117,9 @@ function UserBubble({ message, initials }: { message: Message; initials?: string
   );
 }
 
-export function MessageBubble({ message, onChipClick, initials }: MessageBubbleProps) {
+export function MessageBubble({ message, onChipClick, initials, escalate }: MessageBubbleProps) {
   if (message.role === "user") return <UserBubble message={message} initials={initials} />;
-  return <BotBubble message={message} onChipClick={onChipClick} />;
+  return <BotBubble message={message} onChipClick={onChipClick} escalate={escalate} />;
 }
 
 export function TypingIndicator() {
