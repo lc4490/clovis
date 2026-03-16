@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Member } from "@/types";
-
-const PLAN_OPTIONS = [
-  { label: "PPO Choice", value: "PPO Choice", stars: 4 },
-  { label: "PPO Plus", value: "PPO Plus", stars: 4 },
-  { label: "HMO Classic", value: "HMO Classic", stars: 4 },
-  { label: "HMO Flex", value: "HMO Flex", stars: 3 },
-] as const;
+import type { Member, CloverPlan } from "@/types";
 
 interface SetupPageProps {
   onComplete: (member: Member) => void;
@@ -17,19 +10,43 @@ interface SetupPageProps {
 export function SetupPage({ onComplete }: SetupPageProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [plan, setPlan] = useState("PPO Choice");
+  const [zip, setZip] = useState("");
+  const [plans, setPlans] = useState<CloverPlan[] | null>(null);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [plansError, setPlansError] = useState<string | null>(null);
 
-  const canSubmit = firstName.trim().length > 0;
+  const canFindPlans = firstName.trim().length > 0 && /^\d{5}$/.test(zip);
+  const selectedPlan = plans?.find((p) => p.id === selectedPlanId) ?? null;
+  const canSubmit = selectedPlan !== null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  async function handleFindPlans(e: React.SyntheticEvent) {
     e.preventDefault();
-    if (!canSubmit) return;
+    if (!canFindPlans) return;
+    setLoading(true);
+    setPlansError(null);
+    setPlans(null);
+    setSelectedPlanId(null);
+    try {
+      const res = await fetch(`/api/plans?zip_code=${encodeURIComponent(zip)}`);
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setPlansError(data.error ?? "No plans found for this ZIP code.");
+      } else {
+        setPlans(data.plans);
+      }
+    } catch {
+      setPlansError("Failed to load plans. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
-    const selected =
-      PLAN_OPTIONS.find((p) => p.value === plan) ?? PLAN_OPTIONS[0];
-    const fullName = [firstName.trim(), lastName.trim()]
-      .filter(Boolean)
-      .join(" ");
+  function handleSubmit(e: React.SyntheticEvent) {
+    e.preventDefault();
+    if (!canSubmit || !selectedPlan) return;
+
+    const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(" ");
     const initials = `${firstName[0]}${lastName[0] ?? ""}`.toUpperCase();
     const memberId = `CLOV-${Math.floor(1000 + Math.random() * 9000)}-NJ`;
 
@@ -37,24 +54,25 @@ export function SetupPage({ onComplete }: SetupPageProps) {
       name: fullName,
       initials,
       memberId,
-      plan: selected.label,
-      stars: selected.stars,
+      plan: selectedPlan.name,
+      planId: selectedPlan.id,
+      planType: selectedPlan.type,
+      premium: selectedPlan.premium,
+      stars: selectedPlan.stars,
+      zipCode: zip,
     });
-  };
+  }
 
   return (
     <div className="min-h-screen bg-clover-bg flex font-sans">
       {/* Left branding panel */}
       <div className="hidden lg:flex w-[400px] bg-clover-green flex-col flex-shrink-0 relative overflow-hidden p-10">
-        {/* Depth overlays */}
         <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/15 to-transparent pointer-events-none" />
-        {/* Decorative circles */}
         <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-white/[0.06] pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-black/[0.08] pointer-events-none" />
 
         <div className="relative z-10 flex flex-col h-full">
-          {/* Logo */}
           <div className="flex items-center gap-2.5 mb-16">
             <div
               className="w-8 h-8 flex items-center justify-center text-base flex-shrink-0"
@@ -70,7 +88,6 @@ export function SetupPage({ onComplete }: SetupPageProps) {
             </span>
           </div>
 
-          {/* Headline */}
           <div className="mb-auto">
             <h1
               className="text-[38px] text-white font-normal leading-tight mb-4"
@@ -79,8 +96,8 @@ export function SetupPage({ onComplete }: SetupPageProps) {
               Ask <em style={{ fontStyle: "italic" }}>Clovis</em>
             </h1>
             <p className="text-white/65 text-[14px] leading-relaxed mb-10">
-              Your personal Medicare guide — instant answers about your
-              benefits, claims, and coverage.
+              Your personal Medicare guide — instant answers about your benefits, claims, and
+              coverage.
             </p>
 
             <div className="flex flex-col gap-3">
@@ -108,7 +125,7 @@ export function SetupPage({ onComplete }: SetupPageProps) {
 
       {/* Right form panel */}
       <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-[400px]">
+        <div className="w-full max-w-[420px]">
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 mb-10">
             <div
@@ -132,11 +149,10 @@ export function SetupPage({ onComplete }: SetupPageProps) {
             Set up your profile
           </h2>
           <p className="text-[13px] text-clover-muted mb-8">
-            This helps Clovis personalize answers to your specific plan and
-            coverage.
+            Enter your ZIP code to find your Clover Health plan.
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <form onSubmit={plans ? handleSubmit : handleFindPlans} className="flex flex-col gap-5">
             {/* Name row */}
             <div className="flex gap-3">
               <div className="flex-1 flex flex-col gap-1.5">
@@ -166,51 +182,117 @@ export function SetupPage({ onComplete }: SetupPageProps) {
               </div>
             </div>
 
-            {/* Plan select */}
+            {/* ZIP + Find Plans */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[11px] text-clover-mid uppercase tracking-wider font-medium">
-                Your plan
+                ZIP code
               </label>
-              <div className="relative">
-                <select
-                  value={plan}
-                  onChange={(e) => setPlan(e.target.value)}
-                  className="w-full appearance-none bg-white border border-clover-border rounded-xl px-4 py-3 text-[14px] text-clover-dark outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all pr-10 cursor-pointer"
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={5}
+                  value={zip}
+                  onChange={(e) => {
+                    setZip(e.target.value.replace(/\D/g, ""));
+                    // Reset plans if ZIP changes
+                    if (plans) { setPlans(null); setSelectedPlanId(null); setPlansError(null); }
+                  }}
+                  placeholder="07030"
+                  className="flex-1 bg-white border border-clover-border rounded-xl px-4 py-3 text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
+                />
+                <button
+                  type="submit"
+                  disabled={!canFindPlans || loading}
+                  className="px-4 py-3 bg-clover-green text-white rounded-xl text-[13px] font-medium hover:bg-clover-light disabled:opacity-40 disabled:cursor-not-allowed transition-all whitespace-nowrap shadow-[0_1px_3px_rgba(82,183,136,0.4)]"
                 >
-                  {PLAN_OPTIONS.map((p) => (
-                    <option key={p.value} value={p.value}>
-                      {p.label} · {p.stars}-Star
-                    </option>
-                  ))}
-                </select>
-                {/* Chevron */}
-                <svg
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-clover-muted pointer-events-none"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M6 9l6 6 6-6" />
-                </svg>
+                  {loading ? "Searching…" : "Find Plans"}
+                </button>
               </div>
             </div>
 
-            {/* Member ID note */}
-            <p className="text-[12px] text-clover-muted -mt-1">
-              {/* A member ID will be generated automatically. */}
-            </p>
+            {/* Error */}
+            {plansError && (
+              <p className="text-[13px] text-red-500 -mt-1">{plansError}</p>
+            )}
+
+            {/* Plan cards */}
+            {plans && plans.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <label className="text-[11px] text-clover-mid uppercase tracking-wider font-medium">
+                  Select your plan
+                </label>
+                <div className="flex flex-col gap-2">
+                  {plans.map((p) => {
+                    const isSelected = selectedPlanId === p.id;
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setSelectedPlanId(p.id)}
+                        className={`w-full text-left rounded-xl border px-4 py-3 transition-all flex items-center justify-between gap-3 ${
+                          isSelected
+                            ? "border-clover-green bg-[rgba(82,183,136,0.06)] shadow-[0_0_0_2px_rgba(82,183,136,0.25)]"
+                            : "border-clover-border bg-white hover:border-clover-light"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          {/* Type badge */}
+                          <span
+                            className={`flex-shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                              p.type === "HMO"
+                                ? "bg-blue-50 text-blue-600"
+                                : "bg-emerald-50 text-emerald-700"
+                            }`}
+                          >
+                            {p.type}
+                          </span>
+                          <span className="text-[14px] text-clover-dark font-medium truncate">
+                            {p.name}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          <span className="text-[13px] text-clover-muted">
+                            {p.premium === 0 ? "$0/mo" : `$${p.premium}/mo`}
+                          </span>
+                          {/* Checkmark */}
+                          <span
+                            className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                              isSelected
+                                ? "bg-clover-green border-clover-green"
+                                : "border-clover-border"
+                            }`}
+                          >
+                            {isSelected && (
+                              <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 10 8" fill="none">
+                                <path
+                                  d="M1 4l2.5 2.5L9 1"
+                                  stroke="currentColor"
+                                  strokeWidth="1.8"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            )}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Submit */}
-            <button
-              type="submit"
-              disabled={!canSubmit}
-              className="mt-2 bg-clover-green text-white rounded-xl py-3.5 text-[14px] font-medium hover:bg-clover-light disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_1px_3px_rgba(82,183,136,0.4)] hover:shadow-[0_4px_12px_rgba(82,183,136,0.35)] hover:-translate-y-px active:translate-y-0"
-            >
-              Start chatting →
-            </button>
+            {plans && (
+              <button
+                type="submit"
+                disabled={!canSubmit}
+                className="mt-1 bg-clover-green text-white rounded-xl py-3.5 text-[14px] font-medium hover:bg-clover-light disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_1px_3px_rgba(82,183,136,0.4)] hover:shadow-[0_4px_12px_rgba(82,183,136,0.35)] hover:-translate-y-px active:translate-y-0"
+              >
+                Start chatting →
+              </button>
+            )}
           </form>
         </div>
       </div>

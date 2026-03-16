@@ -47,10 +47,26 @@ export function parseSegments(text: string): Segment[] {
   return segments;
 }
 
-/** Inline bold: replace **text** with <strong>text</strong> segments */
-export function parseBold(text: string): Array<string | { bold: string }> {
-  const parts = text.split(/\*\*(.+?)\*\*/g);
-  return parts.map((p, i) => (i % 2 === 1 ? { bold: p } : p));
+/** Parse inline bold (**text**) and markdown links ([text](url)) */
+export type InlinePart = string | { bold: string } | { link: { text: string; url: string } };
+
+export function parseBold(text: string): InlinePart[] {
+  const result: InlinePart[] = [];
+  const re = /\*\*(.+?)\*\*|\[(.+?)\]\((https?:\/\/[^)]+)\)/g;
+  let last = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = re.exec(text)) !== null) {
+    if (match.index > last) result.push(text.slice(last, match.index));
+    if (match[1] !== undefined) {
+      result.push({ bold: match[1] });
+    } else {
+      result.push({ link: { text: match[2], url: match[3] } });
+    }
+    last = re.lastIndex;
+  }
+  if (last < text.length) result.push(text.slice(last));
+  return result;
 }
 
 /** Create a Message object from a bot reply string */

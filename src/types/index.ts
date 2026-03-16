@@ -48,7 +48,11 @@ export interface Member {
   initials: string;
   memberId: string;
   plan: string;
+  planId: string;
+  planType: string; // "PPO" | "HMO"
+  premium: number;
   stars: number;
+  zipCode: string;
 }
 
 export interface FormularyDrug {
@@ -71,10 +75,27 @@ export interface FormularySearchResponse {
   results: FormularyDrug[];
 }
 
+export interface CloverPlan {
+  id: string;
+  name: string;
+  premium: number;
+  type: string; // "PPO" | "HMO"
+  stars: number;
+}
+
+export interface PlansResponse {
+  plans: CloverPlan[];
+  error?: string;
+}
+
 export interface ChatRequest {
   messages: { role: Role; content: string }[];
   memberName: string;
   memberPlan: string;
+  memberPlanId?: string;
+  memberPlanType?: string;
+  memberPremium?: number;
+  memberZip?: string;
 }
 
 export interface ChatResponse {

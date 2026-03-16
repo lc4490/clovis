@@ -73,7 +73,7 @@ export function Chat({ onQuickAction, member }: ChatProps) {
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: history, memberName: member.name, memberPlan: member.plan }),
+          body: JSON.stringify({ messages: history, memberName: member.name, memberPlan: member.plan, memberPlanId: member.planId, memberPlanType: member.planType, memberPremium: member.premium, memberZip: member.zipCode }),
         });
 
         if (!res.ok) throw new Error("HTTP " + res.status);

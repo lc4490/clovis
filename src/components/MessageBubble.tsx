@@ -1,6 +1,6 @@
 "use client";
 
-import { parseSegments, parseBold } from "@/lib/utils";
+import { parseSegments, parseBold, type InlinePart } from "@/lib/utils";
 import { PHONE_NUMBER } from "@/lib/constants";
 import type { Message } from "@/types";
 
@@ -14,15 +14,21 @@ function InlineText({ text }: { text: string }) {
   const parts = parseBold(text);
   return (
     <>
-      {parts.map((p, i) =>
-        typeof p === "string" ? (
-          <span key={i}>{p}</span>
-        ) : (
-          <strong key={i} className="font-semibold">
-            {p.bold}
-          </strong>
-        )
-      )}
+      {parts.map((p: InlinePart, i) => {
+        if (typeof p === "string") return <span key={i}>{p}</span>;
+        if ("bold" in p) return <strong key={i} className="font-semibold">{p.bold}</strong>;
+        return (
+          <a
+            key={i}
+            href={p.link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-clover-green underline underline-offset-2 hover:text-clover-light transition-colors"
+          >
+            {p.link.text}
+          </a>
+        );
+      })}
     </>
   );
 }

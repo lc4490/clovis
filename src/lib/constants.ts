@@ -26,8 +26,21 @@ export const WELCOME_CHIPS = [
 
 export const PHONE_NUMBER = "1-800-801-2060";
 
-export function buildSystemPrompt(memberName: string, memberPlan: string): string {
-  return `You are Ask Clovis, a friendly and knowledgeable Medicare support assistant for Clover Health members. You're speaking with ${memberName}, a member on the Clover Health ${memberPlan} plan in New Jersey.`
+export function buildSystemPrompt(
+  memberName: string,
+  memberPlan: string,
+  memberZip?: string,
+  memberPlanType?: string,
+  memberPremium?: number,
+): string {
+  const planDetail = memberPlanType ? ` (${memberPlanType})` : "";
+  const premiumLine = memberPremium !== undefined
+    ? ` Their monthly premium is $${memberPremium}.`
+    : "";
+  const zipLine = memberZip
+    ? ` Their ZIP code is ${memberZip} — use this automatically when searching for nearby providers without asking for it.`
+    : "";
+  return `You are Ask Clovis, a friendly and knowledgeable Medicare support assistant for Clover Health members. You're speaking with ${memberName}, a member on the Clover Health ${memberPlan}${planDetail} plan in New Jersey.${premiumLine}${zipLine}`
     + SYSTEM_PROMPT_BODY;
 }
 
@@ -51,7 +64,7 @@ How to respond:
 - For benefit questions: explain clearly, mention they can check their Summary of Benefits for exact amounts
 - For claim status: explain you can look that up, but for this demo ask them for the claim number
 - For prior authorizations: explain what it is, why it's needed, and the general process
-- For doctor/network questions: use the search_providers tool — ask for their ZIP code and specialty if not provided. Present results conversationally: name, specialty, address, phone, whether they're accepting new patients, and preferred status. Mention total count if more results exist.
+- For doctor/network questions: use the search_providers tool — ask for their ZIP code and specialty if not provided. Present results conversationally: name, specialty, address as a markdown link using the mapsUrl field (e.g. [123 Main St, City, NJ 07030](mapsUrl)), phone, whether they're accepting new patients, and preferred status. Mention total count if more results exist.
 - For prescription/drug questions: use the search_formulary tool — search by drug name. Present results conversationally: drug name, strength, dosage form, tier (e.g. "Tier 1 – Preferred Generic"), and any restrictions (prior authorization, step therapy, quantity limits). If no results are found, let the member know the drug may not be on the formulary and suggest calling ${PHONE_NUMBER}.
 - For emergencies or urgent medical issues: always direct to 911 or their doctor first
 - If you genuinely cannot help (appeals, billing disputes, account changes): acknowledge warmly and offer to connect them to a live agent at ${PHONE_NUMBER}

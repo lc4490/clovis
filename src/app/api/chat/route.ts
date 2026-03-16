@@ -64,11 +64,12 @@ const FORMULARY_SEARCH_TOOL: Anthropic.Tool = {
   },
 };
 
-async function callFormularySearch(input: Record<string, unknown>): Promise<string> {
+async function callFormularySearch(input: Record<string, unknown>, planId?: string): Promise<string> {
   const params = new URLSearchParams();
   params.set("DrugName", input.drug_name as string);
   if (input.drug_tier) params.set("DrugTier", input.drug_tier as string);
   params.set("_count", String(input.page_size ?? 5));
+  if (planId) params.set("planId", planId);
 
   const url = `${process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000"}/api/formulary?${params}`;
   const res = await fetch(url);
@@ -118,17 +119,22 @@ async function callProviderSearch(input: Record<string, unknown>): Promise<strin
   const data = (await res.json()) as ProviderSearchResponse;
 
   // Trim to what's useful in chat context
-  const summary = data.results.slice(0, 5).map((p) => ({
-    name: p.full_name,
-    practice: p.practice_name,
-    specialty: p.specialties?.[0] ?? "",
-    address: `${p.address1}, ${p.city}, ${p.office_state} ${p.zip_code}`,
-    phone: p.phone,
-    accepting: p.is_accepting_new_patients,
-    preferred: p.is_preferred,
-    distance: p.distance ? `${p.distance.toFixed(1)} mi` : null,
-    languages: p.languages_spoken?.map((l) => l.label) ?? [],
-  }));
+  const summary = data.results.slice(0, 5).map((p) => {
+    const address = `${p.address1}, ${p.city}, ${p.office_state} ${p.zip_code}`;
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+    return {
+      name: p.full_name,
+      practice: p.practice_name,
+      specialty: p.specialties?.[0] ?? "",
+      address,
+      mapsUrl,
+      phone: p.phone,
+      accepting: p.is_accepting_new_patients,
+      preferred: p.is_preferred,
+      distance: p.distance ? `${p.distance.toFixed(1)} mi` : null,
+      languages: p.languages_spoken?.map((l) => l.label) ?? [],
+    };
+  });
 
   return JSON.stringify({ total: data.total, results: summary });
 }
@@ -145,7 +151,14 @@ export async function POST(req: NextRequest): Promise<NextResponse<ChatResponse>
     }
 
     const messages: Anthropic.MessageParam[] = [...body.messages];
-    const systemPrompt = buildSystemPrompt(body.memberName ?? "the member", body.memberPlan ?? "PPO Choice");
+    const memberPlanId = body.memberPlanId;
+    const systemPrompt = buildSystemPrompt(
+      body.memberName ?? "the member",
+      body.memberPlan ?? "PPO Choice",
+      body.memberZip,
+      body.memberPlanType,
+      body.memberPremium,
+    );
 
     // Agentic loop: allow Claude to call tools then produce a final reply
     let reply = "";
@@ -177,7 +190,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ChatResponse>
               type: "tool_result" as const,
               tool_use_id: block.id,
               content: block.name === "search_formulary"
-                ? await callFormularySearch(block.input as Record<string, unknown>)
+                ? await callFormularySearch(block.input as Record<string, unknown>, memberPlanId)
                 : await callProviderSearch(block.input as Record<string, unknown>),
             }))
         );
