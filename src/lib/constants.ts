@@ -2,10 +2,13 @@ import type { Member } from "@/types";
 
 export type Language = "en" | "es" | "zh";
 
-export const LANGUAGES: { code: Language; flag: string; nativeLabel: string }[] = [
-  { code: "en", flag: "🇺🇸", nativeLabel: "English" },
-  { code: "es", flag: "🇪🇸", nativeLabel: "Español" },
-  { code: "zh", flag: "🇨🇳", nativeLabel: "中文" },
+export const LANGUAGES: {
+  code: Language;
+  nativeLabel: string;
+}[] = [
+  { code: "en", nativeLabel: "English" },
+  { code: "es", nativeLabel: "Español" },
+  { code: "zh", nativeLabel: "中文" },
 ];
 
 export const UI_STRINGS: Record<
@@ -28,6 +31,7 @@ export const UI_STRINGS: Record<
     escalateHours: string;
     // Sidebar
     memberPortal: string;
+    memberId: string;
     quickActions: { icon: string; label: string; prompt: string }[];
     stillNeedHelp: string;
     callLabel: (phone: string) => string;
@@ -58,47 +62,82 @@ export const UI_STRINGS: Record<
     welcome: (name) =>
       `Hello, ${name}! 👋 I'm your Clover Health assistant — here to help you understand your benefits, check on claims, find doctors, and much more.\n\nWhat can I help you with today?`,
     welcomeChips: [
-      { label: "My benefits",         prompt: "What are my plan benefits?" },
-      { label: "Find a provider",     prompt: "How do I find an in-network doctor or specialist?" },
-      { label: "Check a claim",       prompt: "How do I check the status of a claim?" },
-      { label: "Prior authorization", prompt: "What is prior authorization and how do I get it?" },
+      { label: "My benefits", prompt: "What are my plan benefits?" },
+      {
+        label: "Find a provider",
+        prompt: "How do I find an in-network doctor or specialist?",
+      },
+      {
+        label: "Check a claim",
+        prompt: "How do I check the status of a claim?",
+      },
+      {
+        label: "Prior authorization",
+        prompt: "What is prior authorization and how do I get it?",
+      },
     ],
-    disclaimer:    "General plan information only — not medical advice.",
+    disclaimer: "General plan information only — not medical advice.",
     textSizeLabel: "Text size:",
-    available:     "Available 24/7",
-    errorMsg:        "I'm sorry, I ran into a technical issue. Please try again, or call us at 1-800-801-2060 for immediate help.",
-    askClovis:       "Ask",
-    inputPlaceholder:"Type your question here…",
-    inputHint:       "Enter to send · Shift+Enter for new line",
-    escalateText:    "A live agent can help with this.",
-    escalateCall:    "Call",
-    escalateHours:   "(Mon–Fri, 8am–8pm ET)",
-    memberPortal:    "Member Portal",
+    available: "Available 24/7",
+    errorMsg:
+      "I'm sorry, I ran into a technical issue. Please try again, or call us at 1-800-801-2060 for immediate help.",
+    askClovis: "Ask",
+    inputPlaceholder: "Type your question here…",
+    inputHint: "Enter to send · Shift+Enter for new line",
+    escalateText: "A live agent can help with this.",
+    escalateCall: "Call",
+    escalateHours: "(Mon–Fri, 8am–8pm ET)",
+    memberPortal: "Member Portal",
+    memberId: "Member ID",
     quickActions: [
-      { icon: "🦷", label: "Dental & Vision",     prompt: "What does my plan cover for dental?" },
-      { icon: "📋", label: "Check a Claim",        prompt: "How do I check the status of a claim?" },
-      { icon: "👩‍⚕️", label: "Find a Doctor",       prompt: "Is my doctor in-network?" },
-      { icon: "💊", label: "OTC Allowance",        prompt: "Tell me about the OTC allowance benefit" },
-      { icon: "📝", label: "Prior Authorization",  prompt: "What is prior authorization and how do I get it?" },
-      { icon: "🏆", label: "Rewards Program",      prompt: "How do I earn my $400 wellness reward?" },
+      {
+        icon: "🦷",
+        label: "Dental & Vision",
+        prompt: "What does my plan cover for dental?",
+      },
+      {
+        icon: "📋",
+        label: "Check a Claim",
+        prompt: "How do I check the status of a claim?",
+      },
+      {
+        icon: "👩‍⚕️",
+        label: "Find a Doctor",
+        prompt: "Is my doctor in-network?",
+      },
+      {
+        icon: "💊",
+        label: "OTC Allowance",
+        prompt: "Tell me about the OTC allowance benefit",
+      },
+      {
+        icon: "📝",
+        label: "Prior Authorization",
+        prompt: "What is prior authorization and how do I get it?",
+      },
+      {
+        icon: "🏆",
+        label: "Rewards Program",
+        prompt: "How do I earn my $400 wellness reward?",
+      },
     ],
     stillNeedHelp: "Still need help?",
-    callLabel:     (phone) => `Call ${phone}`,
-    commonTopics:  "Common Topics",
-    signedInAs:    "Signed In As",
+    callLabel: (phone) => `Call ${phone}`,
+    commonTopics: "Common Topics",
+    signedInAs: "Signed In As",
     setup: {
-      heading:              "Set up your profile",
-      subtitle:             "Enter your ZIP code to find your Clover Health plan.",
-      firstName:            "First name",
+      heading: "Set up your profile",
+      subtitle: "Enter your ZIP code to find your Clover Health plan.",
+      firstName: "First name",
       firstNamePlaceholder: "Margaret",
-      lastName:             "Last name",
-      lastNamePlaceholder:  "Torres",
-      zipCode:              "ZIP code",
-      findPlans:            "Find Plans",
-      searching:            "Searching…",
-      selectPlan:           "Select your plan",
-      startChatting:        "Start chatting →",
-      disclaimer:           "General plan information only — not medical advice.",
+      lastName: "Last name",
+      lastNamePlaceholder: "Torres",
+      zipCode: "ZIP code",
+      findPlans: "Find Plans",
+      searching: "Searching…",
+      selectPlan: "Select your plan",
+      startChatting: "Start chatting →",
+      disclaimer: "General plan information only — not medical advice.",
       features: [
         { icon: "🔍", text: "Understand your benefits" },
         { icon: "📋", text: "Check on claims instantly" },
@@ -106,7 +145,7 @@ export const UI_STRINGS: Record<
         { icon: "💊", text: "Manage your OTC allowance" },
       ],
       errorNoPlans: "No plans found for this ZIP code.",
-      errorFailed:  "Failed to load plans. Please try again.",
+      errorFailed: "Failed to load plans. Please try again.",
       chooseLanguage: "Choose your language",
     },
   },
@@ -114,47 +153,86 @@ export const UI_STRINGS: Record<
     welcome: (name) =>
       `¡Hola, ${name}! 👋 Soy su asistente de Clover Health — aquí para ayudarle a entender sus beneficios, verificar reclamaciones, encontrar médicos y mucho más.\n\n¿En qué puedo ayudarle hoy?`,
     welcomeChips: [
-      { label: "Mis beneficios",      prompt: "¿Cuáles son los beneficios de mi plan?" },
-      { label: "Buscar proveedor",    prompt: "¿Cómo encuentro un médico o especialista en la red?" },
-      { label: "Ver reclamación",     prompt: "¿Cómo verifico el estado de una reclamación?" },
-      { label: "Autorización previa", prompt: "¿Qué es la autorización previa y cómo la obtengo?" },
+      {
+        label: "Mis beneficios",
+        prompt: "¿Cuáles son los beneficios de mi plan?",
+      },
+      {
+        label: "Buscar proveedor",
+        prompt: "¿Cómo encuentro un médico o especialista en la red?",
+      },
+      {
+        label: "Ver reclamación",
+        prompt: "¿Cómo verifico el estado de una reclamación?",
+      },
+      {
+        label: "Autorización previa",
+        prompt: "¿Qué es la autorización previa y cómo la obtengo?",
+      },
     ],
-    disclaimer:    "Información general del plan — no es consejo médico.",
+    disclaimer: "Información general del plan — no es consejo médico.",
     textSizeLabel: "Tamaño de texto:",
-    available:     "Disponible 24/7",
-    errorMsg:        "Lo siento, encontré un problema técnico. Intente de nuevo o llámenos al 1-800-801-2060.",
-    askClovis:       "Preguntar a",
-    inputPlaceholder:"Escriba su pregunta aquí…",
-    inputHint:       "Enter para enviar · Shift+Enter para nueva línea",
-    escalateText:    "Un agente en vivo puede ayudarle.",
-    escalateCall:    "Llamar al",
-    escalateHours:   "(Lun–Vie, 8am–8pm ET)",
-    memberPortal:    "Portal del Miembro",
+    available: "Disponible 24/7",
+    errorMsg:
+      "Lo siento, encontré un problema técnico. Intente de nuevo o llámenos al 1-800-801-2060.",
+    askClovis: "Preguntar a",
+    inputPlaceholder: "Escriba su pregunta aquí…",
+    inputHint: "Enter para enviar · Shift+Enter para nueva línea",
+    escalateText: "Un agente en vivo puede ayudarle.",
+    escalateCall: "Llamar al",
+    escalateHours: "(Lun–Vie, 8am–8pm ET)",
+    memberPortal: "Portal del Miembro",
+    memberId: "ID de Miembro",
     quickActions: [
-      { icon: "🦷", label: "Dental y Visión",        prompt: "¿Qué cubre mi plan para dental?" },
-      { icon: "📋", label: "Ver Reclamación",         prompt: "¿Cómo verifico el estado de una reclamación?" },
-      { icon: "👩‍⚕️", label: "Buscar Médico",          prompt: "¿Mi médico está en la red?" },
-      { icon: "💊", label: "Beneficio OTC",           prompt: "Cuéntame sobre el beneficio de la tarjeta OTC" },
-      { icon: "📝", label: "Autorización Previa",     prompt: "¿Qué es la autorización previa y cómo la obtengo?" },
-      { icon: "🏆", label: "Programa de Recompensas", prompt: "¿Cómo gano mi recompensa de bienestar de $400?" },
+      {
+        icon: "🦷",
+        label: "Dental y Visión",
+        prompt: "¿Qué cubre mi plan para dental?",
+      },
+      {
+        icon: "📋",
+        label: "Ver Reclamación",
+        prompt: "¿Cómo verifico el estado de una reclamación?",
+      },
+      {
+        icon: "👩‍⚕️",
+        label: "Buscar Médico",
+        prompt: "¿Mi médico está en la red?",
+      },
+      {
+        icon: "💊",
+        label: "Beneficio OTC",
+        prompt: "Cuéntame sobre el beneficio de la tarjeta OTC",
+      },
+      {
+        icon: "📝",
+        label: "Autorización Previa",
+        prompt: "¿Qué es la autorización previa y cómo la obtengo?",
+      },
+      {
+        icon: "🏆",
+        label: "Programa de Recompensas",
+        prompt: "¿Cómo gano mi recompensa de bienestar de $400?",
+      },
     ],
     stillNeedHelp: "¿Necesita ayuda?",
-    callLabel:     (phone) => `Llamar al ${phone}`,
-    commonTopics:  "Temas Comunes",
-    signedInAs:    "Conectado Como",
+    callLabel: (phone) => `Llamar al ${phone}`,
+    commonTopics: "Temas Comunes",
+    signedInAs: "Conectado Como",
     setup: {
-      heading:              "Configure su perfil",
-      subtitle:             "Ingrese su código postal para encontrar su plan de Clover Health.",
-      firstName:            "Nombre",
+      heading: "Configure su perfil",
+      subtitle:
+        "Ingrese su código postal para encontrar su plan de Clover Health.",
+      firstName: "Nombre",
       firstNamePlaceholder: "María",
-      lastName:             "Apellido",
-      lastNamePlaceholder:  "Torres",
-      zipCode:              "Código postal",
-      findPlans:            "Buscar Planes",
-      searching:            "Buscando…",
-      selectPlan:           "Seleccione su plan",
-      startChatting:        "Comenzar a chatear →",
-      disclaimer:           "Información general del plan — no es consejo médico.",
+      lastName: "Apellido",
+      lastNamePlaceholder: "Torres",
+      zipCode: "Código postal",
+      findPlans: "Buscar Planes",
+      searching: "Buscando…",
+      selectPlan: "Seleccione su plan",
+      startChatting: "Comenzar a chatear →",
+      disclaimer: "Información general del plan — no es consejo médico.",
       features: [
         { icon: "🔍", text: "Entienda sus beneficios" },
         { icon: "📋", text: "Verifique reclamaciones al instante" },
@@ -162,7 +240,7 @@ export const UI_STRINGS: Record<
         { icon: "💊", text: "Administre su beneficio OTC" },
       ],
       errorNoPlans: "No se encontraron planes para este código postal.",
-      errorFailed:  "Error al cargar los planes. Inténtelo de nuevo.",
+      errorFailed: "Error al cargar los planes. Inténtelo de nuevo.",
       chooseLanguage: "Elige tu idioma",
     },
   },
@@ -175,42 +253,43 @@ export const UI_STRINGS: Record<
       { label: "查看理赔", prompt: "如何查看理赔状态？" },
       { label: "预先授权", prompt: "什么是预先授权，如何申请？" },
     ],
-    disclaimer:    "仅供一般计划信息参考 — 非医疗建议。",
+    disclaimer: "仅供一般计划信息参考 — 非医疗建议。",
     textSizeLabel: "文字大小：",
-    available:     "全天候服务",
-    errorMsg:        "抱歉，遇到技术问题。请重试或拨打 1-800-801-2060 获取帮助。",
-    askClovis:       "询问",
-    inputPlaceholder:"在此输入您的问题…",
-    inputHint:       "按Enter发送 · Shift+Enter换行",
-    escalateText:    "人工客服可以为您提供帮助。",
-    escalateCall:    "拨打",
-    escalateHours:   "（周一至周五，上午8点–晚上8点 ET）",
-    memberPortal:    "会员门户",
+    available: "全天候服务",
+    errorMsg: "抱歉，遇到技术问题。请重试或拨打 1-800-801-2060 获取帮助。",
+    askClovis: "问",
+    inputPlaceholder: "在此输入您的问题…",
+    inputHint: "按Enter发送 · Shift+Enter换行",
+    escalateText: "人工客服可以为您提供帮助。",
+    escalateCall: "拨打",
+    escalateHours: "（周一至周五，上午8点–晚上8点 ET）",
+    memberPortal: "会员门户",
+    memberId: "会员编号",
     quickActions: [
       { icon: "🦷", label: "牙科与视力", prompt: "我的计划涵盖哪些牙科服务？" },
-      { icon: "📋", label: "查看理赔",   prompt: "如何查看理赔状态？" },
+      { icon: "📋", label: "查看理赔", prompt: "如何查看理赔状态？" },
       { icon: "👩‍⚕️", label: "查找医生", prompt: "我的医生在网络内吗？" },
-      { icon: "💊", label: "OTC津贴",    prompt: "介绍一下OTC津贴福利" },
-      { icon: "📝", label: "预先授权",   prompt: "什么是预先授权，如何申请？" },
-      { icon: "🏆", label: "奖励计划",   prompt: "如何获得400美元的健康奖励？" },
+      { icon: "💊", label: "OTC津贴", prompt: "介绍一下OTC津贴福利" },
+      { icon: "📝", label: "预先授权", prompt: "什么是预先授权，如何申请？" },
+      { icon: "🏆", label: "奖励计划", prompt: "如何获得400美元的健康奖励？" },
     ],
     stillNeedHelp: "仍需帮助？",
-    callLabel:     (phone) => `拨打 ${phone}`,
-    commonTopics:  "常见话题",
-    signedInAs:    "已登录为",
+    callLabel: (phone) => `拨打 ${phone}`,
+    commonTopics: "常见话题",
+    signedInAs: "已登录为",
     setup: {
-      heading:              "设置您的个人资料",
-      subtitle:             "输入您的邮政编码以查找您的Clover Health计划。",
-      firstName:            "名字",
+      heading: "设置您的个人资料",
+      subtitle: "输入您的邮政编码以查找您的Clover Health计划。",
+      firstName: "名字",
       firstNamePlaceholder: "华",
-      lastName:             "姓氏",
-      lastNamePlaceholder:  "李",
-      zipCode:              "邮政编码",
-      findPlans:            "查找计划",
-      searching:            "搜索中…",
-      selectPlan:           "选择您的计划",
-      startChatting:        "开始聊天 →",
-      disclaimer:           "仅供一般计划信息参考 — 非医疗建议。",
+      lastName: "姓氏",
+      lastNamePlaceholder: "李",
+      zipCode: "邮政编码",
+      findPlans: "查找计划",
+      searching: "搜索中…",
+      selectPlan: "选择您的计划",
+      startChatting: "开始聊天 →",
+      disclaimer: "仅供一般计划信息参考 — 非医疗建议。",
       features: [
         { icon: "🔍", text: "了解您的福利" },
         { icon: "📋", text: "即时查看理赔状态" },
@@ -218,38 +297,64 @@ export const UI_STRINGS: Record<
         { icon: "💊", text: "管理您的OTC津贴" },
       ],
       errorNoPlans: "未找到该邮政编码的计划。",
-      errorFailed:  "加载计划失败，请重试。",
+      errorFailed: "加载计划失败，请重试。",
       chooseLanguage: "选择语言",
     },
   },
 };
 
 export const MEMBER: Member = {
-  name:      "Margaret T.",
-  initials:  "MT",
-  memberId:  "CLOV-2847-NJ",
-  plan:      "PPO Choice",
-  planId:    "",
-  planType:  "PPO",
-  premium:   0,
-  stars:     4,
-  zipCode:   "",
+  name: "Margaret T.",
+  initials: "MT",
+  memberId: "CLOV-2847-NJ",
+  plan: "PPO Choice",
+  planId: "",
+  planType: "PPO",
+  premium: 0,
+  stars: 4,
+  zipCode: "",
 };
 
 export const QUICK_ACTIONS = [
-  { icon: "🦷", label: "Dental & Vision",     prompt: "What does my plan cover for dental?" },
-  { icon: "📋", label: "Check a Claim",        prompt: "How do I check the status of a claim?" },
-  { icon: "👩‍⚕️", label: "Find a Doctor",       prompt: "Is my doctor in-network?" },
-  { icon: "💊", label: "OTC Allowance",        prompt: "Tell me about the OTC allowance benefit" },
-  { icon: "📝", label: "Prior Authorization",  prompt: "What is prior authorization and how do I get it?" },
-  { icon: "🏆", label: "Rewards Program",      prompt: "How do I earn my $400 wellness reward?" },
+  {
+    icon: "🦷",
+    label: "Dental & Vision",
+    prompt: "What does my plan cover for dental?",
+  },
+  {
+    icon: "📋",
+    label: "Check a Claim",
+    prompt: "How do I check the status of a claim?",
+  },
+  { icon: "👩‍⚕️", label: "Find a Doctor", prompt: "Is my doctor in-network?" },
+  {
+    icon: "💊",
+    label: "OTC Allowance",
+    prompt: "Tell me about the OTC allowance benefit",
+  },
+  {
+    icon: "📝",
+    label: "Prior Authorization",
+    prompt: "What is prior authorization and how do I get it?",
+  },
+  {
+    icon: "🏆",
+    label: "Rewards Program",
+    prompt: "How do I earn my $400 wellness reward?",
+  },
 ] as const;
 
 export const WELCOME_CHIPS = [
-  { label: "My benefits",          prompt: "What are my plan benefits?" },
-  { label: "Find a provider",      prompt: "How do I find an in-network doctor or specialist?" },
-  { label: "Check a claim",        prompt: "How do I check the status of a claim?" },
-  { label: "Prior authorization",  prompt: "What is prior authorization and how do I get it?" },
+  { label: "My benefits", prompt: "What are my plan benefits?" },
+  {
+    label: "Find a provider",
+    prompt: "How do I find an in-network doctor or specialist?",
+  },
+  { label: "Check a claim", prompt: "How do I check the status of a claim?" },
+  {
+    label: "Prior authorization",
+    prompt: "What is prior authorization and how do I get it?",
+  },
 ] as const;
 
 export const PHONE_NUMBER = "1-800-801-2060";
@@ -268,18 +373,22 @@ export function buildSystemPrompt(
   language?: string,
 ): string {
   const planDetail = memberPlanType ? ` (${memberPlanType})` : "";
-  const premiumLine = memberPremium !== undefined
-    ? ` Their monthly premium is $${memberPremium}.`
-    : "";
+  const premiumLine =
+    memberPremium !== undefined
+      ? ` Their monthly premium is $${memberPremium}.`
+      : "";
   const zipLine = memberZip
     ? ` Their ZIP code is ${memberZip} — use this automatically when searching for nearby providers without asking for it.`
     : "";
-  const languageLine = language && LANGUAGE_NAMES[language]
-    ? `\n\nIMPORTANT: You must respond ONLY in ${LANGUAGE_NAMES[language]}. All responses — including chip suggestions after CHIPS: — must be written in this language.`
-    : "";
-  return `You are Ask Clovis, a friendly and knowledgeable Medicare support assistant for Clover Health members. You're speaking with ${memberName}, a member on the Clover Health ${memberPlan}${planDetail} plan in New Jersey.${premiumLine}${zipLine}`
-    + SYSTEM_PROMPT_BODY
-    + languageLine;
+  const languageLine =
+    language && LANGUAGE_NAMES[language]
+      ? `\n\nIMPORTANT: You must respond ONLY in ${LANGUAGE_NAMES[language]}. All responses — including chip suggestions after CHIPS: — must be written in this language.`
+      : "";
+  return (
+    `You are Ask Clovis, a friendly and knowledgeable Medicare support assistant for Clover Health members. You're speaking with ${memberName}, a member on the Clover Health ${memberPlan}${planDetail} plan in New Jersey.${premiumLine}${zipLine}` +
+    SYSTEM_PROMPT_BODY +
+    languageLine
+  );
 }
 
 const SYSTEM_PROMPT_BODY = `
@@ -313,7 +422,6 @@ Format rules:
 - Use plain paragraph text mostly; only bullet lists for 3+ distinct items
 - Don't use markdown headers
 - Be conversational, not clinical`;
-
 
 export const ESCALATION_TRIGGERS = [
   "1-800-801",

@@ -37,7 +37,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
       const res = await fetch(`/api/plans?zip_code=${encodeURIComponent(zip)}`);
       const data = await res.json();
       if (!res.ok || data.error) {
-        setPlansError(data.error ?? s.errorNoPlans);
+        setPlansError(res.status === 404 ? s.errorNoPlans : s.errorFailed);
       } else {
         setPlans(data.plans);
       }
@@ -99,7 +99,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
               className="text-[38px] text-white font-normal leading-tight mb-4"
               style={{ fontFamily: "DM Serif Display, serif" }}
             >
-              Ask <em style={{ fontStyle: "italic" }}>Clovis</em>
+              {UI_STRINGS[language].askClovis}{" "}<em style={{ fontStyle: "italic" }}>Clovis</em>
             </h1>
             <p className="text-white/65 text-[14px] leading-relaxed mb-10">
               {s.subtitle}
@@ -156,7 +156,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
               >
                 {LANGUAGES.map((l) => (
                   <option key={l.code} value={l.code}>
-                    {l.flag} {l.nativeLabel}
+                    {l.nativeLabel}
                   </option>
                 ))}
               </select>

@@ -169,7 +169,7 @@ export function Chat({ onQuickAction, member, language, onLanguageChange }: Chat
             className="appearance-none bg-white border border-clover-border rounded-lg pl-2.5 pr-7 py-1 text-[11px] text-clover-mid font-medium outline-none cursor-pointer hover:border-clover-light focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
           >
             {LANGUAGES.map((l) => (
-              <option key={l.code} value={l.code}>{l.flag} {l.nativeLabel}</option>
+              <option key={l.code} value={l.code}>{l.nativeLabel}</option>
             ))}
           </select>
           <svg

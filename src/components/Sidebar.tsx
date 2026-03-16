@@ -51,7 +51,7 @@ export function Sidebar({ onQuickAction, member, language = "en" }: SidebarProps
           {strings.signedInAs}
         </p>
         <p className="text-white text-[15px] font-semibold mb-0.5">{member.name}</p>
-        <p className="text-white/60 text-xs font-light">Member ID: {member.memberId}</p>
+        <p className="text-white/60 text-xs font-light">{strings.memberId}: {member.memberId}</p>
         <div className="mt-2.5 pt-2.5 border-t border-white/10 flex items-center justify-between">
           <span className="text-[11px] bg-clover-light text-white px-2 py-0.5 rounded-full font-medium">
             {member.plan}
