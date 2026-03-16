@@ -4,10 +4,10 @@ import { useState } from "react";
 import type { Member } from "@/types";
 
 const PLAN_OPTIONS = [
-  { label: "PPO Choice",  value: "PPO Choice",  stars: 4 },
-  { label: "PPO Plus",    value: "PPO Plus",    stars: 4 },
+  { label: "PPO Choice", value: "PPO Choice", stars: 4 },
+  { label: "PPO Plus", value: "PPO Plus", stars: 4 },
   { label: "HMO Classic", value: "HMO Classic", stars: 4 },
-  { label: "HMO Flex",    value: "HMO Flex",    stars: 3 },
+  { label: "HMO Flex", value: "HMO Flex", stars: 3 },
 ] as const;
 
 interface SetupPageProps {
@@ -16,8 +16,8 @@ interface SetupPageProps {
 
 export function SetupPage({ onComplete }: SetupPageProps) {
   const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName]   = useState("");
-  const [plan, setPlan]           = useState("PPO Choice");
+  const [lastName, setLastName] = useState("");
+  const [plan, setPlan] = useState("PPO Choice");
 
   const canSubmit = firstName.trim().length > 0;
 
@@ -25,12 +25,21 @@ export function SetupPage({ onComplete }: SetupPageProps) {
     e.preventDefault();
     if (!canSubmit) return;
 
-    const selected  = PLAN_OPTIONS.find((p) => p.value === plan) ?? PLAN_OPTIONS[0];
-    const fullName  = [firstName.trim(), lastName.trim()].filter(Boolean).join(" ");
-    const initials  = `${firstName[0]}${lastName[0] ?? ""}`.toUpperCase();
-    const memberId  = `CLOV-${Math.floor(1000 + Math.random() * 9000)}-NJ`;
+    const selected =
+      PLAN_OPTIONS.find((p) => p.value === plan) ?? PLAN_OPTIONS[0];
+    const fullName = [firstName.trim(), lastName.trim()]
+      .filter(Boolean)
+      .join(" ");
+    const initials = `${firstName[0]}${lastName[0] ?? ""}`.toUpperCase();
+    const memberId = `CLOV-${Math.floor(1000 + Math.random() * 9000)}-NJ`;
 
-    onComplete({ name: fullName, initials, memberId, plan: selected.label, stars: selected.stars });
+    onComplete({
+      name: fullName,
+      initials,
+      memberId,
+      plan: selected.label,
+      stars: selected.stars,
+    });
   };
 
   return (
@@ -67,11 +76,11 @@ export function SetupPage({ onComplete }: SetupPageProps) {
               className="text-[38px] text-white font-normal leading-tight mb-4"
               style={{ fontFamily: "DM Serif Display, serif" }}
             >
-              Ask{" "}
-              <em style={{ fontStyle: "italic" }}>Clovis</em>
+              Ask <em style={{ fontStyle: "italic" }}>Clovis</em>
             </h1>
             <p className="text-white/65 text-[14px] leading-relaxed mb-10">
-              Your personal Medicare guide — instant answers about your benefits, claims, and coverage.
+              Your personal Medicare guide — instant answers about your
+              benefits, claims, and coverage.
             </p>
 
             <div className="flex flex-col gap-3">
@@ -123,7 +132,8 @@ export function SetupPage({ onComplete }: SetupPageProps) {
             Set up your profile
           </h2>
           <p className="text-[13px] text-clover-muted mb-8">
-            This helps Clovis personalize answers to your specific plan and coverage.
+            This helps Clovis personalize answers to your specific plan and
+            coverage.
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -190,7 +200,7 @@ export function SetupPage({ onComplete }: SetupPageProps) {
 
             {/* Member ID note */}
             <p className="text-[12px] text-clover-muted -mt-1">
-              A member ID will be generated automatically.
+              {/* A member ID will be generated automatically. */}
             </p>
 
             {/* Submit */}
