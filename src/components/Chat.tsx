@@ -23,9 +23,10 @@ interface ChatProps {
   member: Member;
   language: Language;
   onLanguageChange: (lang: Language) => void;
+  onSidebarToggle?: () => void;
 }
 
-export function Chat({ onQuickAction, member, language, onLanguageChange }: ChatProps) {
+export function Chat({ onQuickAction, member, language, onLanguageChange, onSidebarToggle }: ChatProps) {
   const firstName = member.name.split(" ")[0];
   const strings = UI_STRINGS[language];
 
@@ -125,8 +126,20 @@ export function Chat({ onQuickAction, member, language, onLanguageChange }: Chat
       className="flex-1 flex flex-col overflow-hidden"
     >
       {/* Top bar */}
-      <div className="px-7 py-[18px] bg-white border-b border-clover-border flex items-center justify-between flex-shrink-0 shadow-[0_1px_0_0_rgba(0,0,0,0.04)]">
-        <div>
+      <div className="px-4 sm:px-7 py-[18px] bg-white border-b border-clover-border flex items-center gap-3 flex-shrink-0 shadow-[0_1px_0_0_rgba(0,0,0,0.04)]">
+        {/* Hamburger — mobile only */}
+        {onSidebarToggle && (
+          <button
+            onClick={onSidebarToggle}
+            className="sm:hidden w-8 h-8 flex items-center justify-center rounded-lg hover:bg-clover-mint transition-colors text-clover-mid flex-shrink-0"
+            aria-label="Open menu"
+          >
+            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M3 6h18M3 12h18M3 18h18" />
+            </svg>
+          </button>
+        )}
+        <div className="flex-1 min-w-0">
           <h1
             className="text-[22px] text-clover-dark font-normal leading-tight"
             style={{ fontFamily: "DM Serif Display, serif" }}
@@ -140,14 +153,14 @@ export function Chat({ onQuickAction, member, language, onLanguageChange }: Chat
             Hi, {member.name.split(" ")[0]} · {member.plan}
           </p>
         </div>
-        <div className="flex items-center gap-1.5 bg-clover-mint border border-clover-border px-3.5 py-1.5 rounded-full text-[12px] text-clover-green font-medium">
-          <span className="w-[7px] h-[7px] bg-clover-light rounded-full animate-pulse-dot" />
-          {strings.available}
+        <div className="flex items-center gap-1.5 bg-clover-mint border border-clover-border px-2.5 sm:px-3.5 py-1.5 rounded-full text-[12px] text-clover-green font-medium flex-shrink-0">
+          <span className="w-[7px] h-[7px] bg-clover-light rounded-full animate-pulse-dot flex-shrink-0" />
+          <span className="hidden sm:inline">{strings.available}</span>
         </div>
       </div>
 
       {/* Accessibility bar */}
-      <div className="flex items-center gap-2.5 px-7 py-1.5 bg-clover-bg border-b border-clover-border flex-shrink-0">
+      <div className="flex items-center gap-2.5 px-4 sm:px-7 py-1.5 bg-clover-bg border-b border-clover-border flex-shrink-0">
         <span className="text-[11px] text-clover-muted mr-1">{strings.textSizeLabel}</span>
         <button
           onClick={() => setTextIdx((i) => Math.max(0, i - 1))}
@@ -182,7 +195,7 @@ export function Chat({ onQuickAction, member, language, onLanguageChange }: Chat
       </div>
 
       {/* Messages */}
-      <div className={`flex-1 overflow-y-auto px-7 pt-7 pb-5 flex flex-col gap-[18px] scroll-smooth [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-clover-border [&::-webkit-scrollbar-thumb]:rounded`} style={{ fontSize: TEXT_SIZES[textIdx] }}>
+      <div className={`flex-1 overflow-y-auto px-4 sm:px-7 pt-5 sm:pt-7 pb-5 flex flex-col gap-[18px] scroll-smooth [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-clover-border [&::-webkit-scrollbar-thumb]:rounded`} style={{ fontSize: TEXT_SIZES[textIdx] }}>
         {messages.map((msg) => (
           <MessageBubble
             key={msg.id}
@@ -197,7 +210,7 @@ export function Chat({ onQuickAction, member, language, onLanguageChange }: Chat
       </div>
 
       {/* Disclaimer */}
-      <div className="border-t border-clover-border px-7 py-1.5 text-[11px] text-clover-muted flex items-center gap-2 flex-shrink-0 bg-clover-bg">
+      <div className="border-t border-clover-border px-4 sm:px-7 py-1.5 text-[11px] text-clover-muted flex items-center gap-2 flex-shrink-0 bg-clover-bg">
         <span className="opacity-60">ⓘ</span>
         <span>{strings.disclaimer}</span>
       </div>

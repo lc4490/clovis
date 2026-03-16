@@ -8,9 +8,10 @@ interface SidebarProps {
   onQuickAction: (prompt: string) => void;
   member: Member;
   language?: Language;
+  onClose?: () => void;
 }
 
-export function Sidebar({ onQuickAction, member, language = "en" }: SidebarProps) {
+export function Sidebar({ onQuickAction, member, language = "en", onClose }: SidebarProps) {
   const strings = UI_STRINGS[language];
   return (
     <aside className="w-[280px] bg-clover-green flex flex-col flex-shrink-0 relative overflow-hidden">
@@ -24,6 +25,17 @@ export function Sidebar({ onQuickAction, member, language = "en" }: SidebarProps
       {/* Header */}
       <div className="px-6 pt-7 pb-5 border-b border-white/10 relative z-20">
         <div className="flex items-center gap-2.5 mb-1">
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="sm:hidden ml-auto absolute right-4 top-5 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/15 transition-colors text-white/70"
+              aria-label="Close menu"
+            >
+              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          )}
           <div
             className="w-8 h-8 flex items-center justify-center text-base flex-shrink-0"
             style={{

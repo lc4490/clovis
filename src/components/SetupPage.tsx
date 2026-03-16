@@ -122,7 +122,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
       </div>
 
       {/* Right form panel */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-5 sm:p-8">
         <div className="w-full max-w-[420px]">
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 mb-8">

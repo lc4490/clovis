@@ -44,7 +44,7 @@ function BotBubble({ message, onChipClick, escalate }: MessageBubbleProps) {
   const segments = parseSegments(message.content);
 
   return (
-    <div className="flex gap-3 max-w-[72%] animate-fade-up">
+    <div className="flex gap-3 max-w-[88%] sm:max-w-[72%] animate-fade-up">
       {/* Avatar */}
       <div className="w-[34px] h-[34px] rounded-full flex-shrink-0 flex items-center justify-center text-sm bg-clover-pale border-2 border-clover-border mt-0.5">
         🍀
@@ -106,7 +106,7 @@ function BotBubble({ message, onChipClick, escalate }: MessageBubbleProps) {
 
 function UserBubble({ message, initials }: { message: Message; initials?: string }) {
   return (
-    <div className="flex gap-3 max-w-[72%] self-end flex-row-reverse animate-fade-up">
+    <div className="flex gap-3 max-w-[88%] sm:max-w-[72%] self-end flex-row-reverse animate-fade-up">
       <div className="w-[34px] h-[34px] rounded-full flex-shrink-0 flex items-center justify-center text-[13px] font-semibold bg-clover-green text-white mt-0.5">
         {initials ?? "?"}
       </div>
@@ -124,7 +124,7 @@ export function MessageBubble({ message, onChipClick, initials, escalate }: Mess
 
 export function TypingIndicator() {
   return (
-    <div className="flex gap-3 max-w-[72%]">
+    <div className="flex gap-3 max-w-[88%] sm:max-w-[72%]">
       <div className="w-[34px] h-[34px] rounded-full flex-shrink-0 flex items-center justify-center text-sm bg-clover-pale border-2 border-clover-border mt-0.5">
         🍀
       </div>

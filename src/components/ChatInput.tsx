@@ -39,7 +39,7 @@ export function ChatInput({ value, onChange, onSend, disabled, placeholder, hint
   };
 
   return (
-    <div className="px-7 pb-5 pt-4 bg-white border-t border-clover-border flex-shrink-0">
+    <div className="px-4 sm:px-7 pb-5 pt-4 bg-white border-t border-clover-border flex-shrink-0">
       <div
         className={`flex gap-2.5 items-start bg-clover-bg rounded-2xl px-[18px] py-2.5 pr-3 border-2 transition-all ${
           disabled ? "border-clover-border" : "border-clover-border focus-within:border-clover-light focus-within:shadow-[0_0_0_3px_rgba(82,183,136,0.1)]"
