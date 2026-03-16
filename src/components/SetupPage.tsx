@@ -122,8 +122,8 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
       </div>
 
       {/* Right form panel */}
-      <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center p-5 sm:p-8">
-        <div className="w-full max-w-[420px] py-2 sm:py-0">
+      <div className="flex-1 overflow-y-auto flex flex-col items-center p-5 sm:p-8">
+        <div className="w-full max-w-[420px] my-auto">
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 mb-5 sm:mb-8">
             <div
