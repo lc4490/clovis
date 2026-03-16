@@ -70,7 +70,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
   }
 
   return (
-    <div className="min-h-screen bg-clover-bg flex font-sans">
+    <div className="h-screen bg-clover-bg flex font-sans overflow-hidden">
       {/* Left branding panel */}
       <div className="hidden lg:flex w-[400px] bg-clover-green flex-col flex-shrink-0 relative overflow-hidden p-10">
         <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
@@ -122,10 +122,10 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
       </div>
 
       {/* Right form panel */}
-      <div className="flex-1 flex items-center justify-center p-5 sm:p-8">
-        <div className="w-full max-w-[420px]">
+      <div className="flex-1 overflow-y-auto flex flex-col items-center justify-start sm:justify-center p-5 sm:p-8">
+        <div className="w-full max-w-[420px] py-2 sm:py-0">
           {/* Mobile logo */}
-          <div className="flex lg:hidden items-center gap-2 mb-8">
+          <div className="flex lg:hidden items-center gap-2 mb-5 sm:mb-8">
             <div
               className="w-7 h-7 flex items-center justify-center text-sm"
               style={{ background: "#52B788", borderRadius: "50% 4px 50% 4px" }}
@@ -168,7 +168,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
               </svg>
             </div>
           </div>
-          <p className="text-[13px] text-clover-muted mb-8">{s.subtitle}</p>
+          <p className="text-[13px] text-clover-muted mb-5 sm:mb-8">{s.subtitle}</p>
 
           <form onSubmit={plans ? handleSubmit : handleFindPlans} className="flex flex-col gap-5">
             {/* Name row */}
