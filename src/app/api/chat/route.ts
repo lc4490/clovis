@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { buildSystemPrompt } from "@/lib/constants";
-import type { ChatRequest, ChatResponse, FormularySearchResponse, ProviderSearchResponse } from "@/types";
+import { fetchFormulary } from "@/lib/formulary";
+import { fetchProviders } from "@/lib/providers";
+import type { ChatRequest, ChatResponse } from "@/types";
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -65,39 +67,34 @@ const FORMULARY_SEARCH_TOOL: Anthropic.Tool = {
 };
 
 async function callFormularySearch(input: Record<string, unknown>, planId?: string): Promise<string> {
-  const params = new URLSearchParams();
-  params.set("DrugName", input.drug_name as string);
-  if (input.drug_tier) params.set("DrugTier", input.drug_tier as string);
-  params.set("_count", String(input.page_size ?? 5));
-  if (planId) params.set("planId", planId);
+  try {
+    const data = await fetchFormulary(
+      input.drug_name as string,
+      input.drug_tier as string | undefined,
+      Number(input.page_size ?? 5),
+      planId,
+    );
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-  const url = `${baseUrl}/api/formulary?${params}`;
-  const res = await fetch(url);
+    if (data.results.length === 0) {
+      return JSON.stringify({ total: 0, results: [], note: "No formulary results found for that drug name." });
+    }
 
-  if (!res.ok) {
+    const summary = data.results.map((d) => ({
+      name: d.name,
+      dosageForm: d.dosageForm,
+      strength: d.strength,
+      tier: d.tier,
+      tierLabel: d.tierLabel,
+      priorAuth: d.priorAuth,
+      stepTherapy: d.stepTherapy,
+      quantityLimit: d.quantityLimit,
+      ...(d.quantityLimit && d.quantityLimitAmount ? { quantityLimitAmount: d.quantityLimitAmount, quantityLimitDays: d.quantityLimitDays } : {}),
+    }));
+
+    return JSON.stringify({ total: data.total, results: summary });
+  } catch {
     return JSON.stringify({ error: "Formulary search unavailable" });
   }
-
-  const data = (await res.json()) as FormularySearchResponse;
-
-  if (data.results.length === 0) {
-    return JSON.stringify({ total: 0, results: [], note: "No formulary results found for that drug name." });
-  }
-
-  const summary = data.results.map((d) => ({
-    name: d.name,
-    dosageForm: d.dosageForm,
-    strength: d.strength,
-    tier: d.tier,
-    tierLabel: d.tierLabel,
-    priorAuth: d.priorAuth,
-    stepTherapy: d.stepTherapy,
-    quantityLimit: d.quantityLimit,
-    ...(d.quantityLimit && d.quantityLimitAmount ? { quantityLimitAmount: d.quantityLimitAmount, quantityLimitDays: d.quantityLimitDays } : {}),
-  }));
-
-  return JSON.stringify({ total: data.total, results: summary });
 }
 
 async function callProviderSearch(input: Record<string, unknown>): Promise<string> {
@@ -110,35 +107,30 @@ async function callProviderSearch(input: Record<string, unknown>): Promise<strin
     (input.provider_types as string[]).forEach((t) => params.append("provider_types", t));
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-  const url = `${baseUrl}/api/providers?${params}`;
-  const res = await fetch(url);
+  try {
+    const data = await fetchProviders(params);
 
-  if (!res.ok) {
+    const summary = data.results.slice(0, 5).map((p) => {
+      const address = `${p.address1}, ${p.city}, ${p.office_state} ${p.zip_code}`;
+      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+      return {
+        name: p.full_name,
+        practice: p.practice_name,
+        specialty: p.specialties?.[0] ?? "",
+        address,
+        mapsUrl,
+        phone: p.phone,
+        accepting: p.is_accepting_new_patients,
+        preferred: p.is_preferred,
+        distance: p.distance ? `${p.distance.toFixed(1)} mi` : null,
+        languages: p.languages_spoken?.map((l) => l.label) ?? [],
+      };
+    });
+
+    return JSON.stringify({ total: data.total, results: summary });
+  } catch {
     return JSON.stringify({ error: "Provider search unavailable" });
   }
-
-  const data = (await res.json()) as ProviderSearchResponse;
-
-  // Trim to what's useful in chat context
-  const summary = data.results.slice(0, 5).map((p) => {
-    const address = `${p.address1}, ${p.city}, ${p.office_state} ${p.zip_code}`;
-    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
-    return {
-      name: p.full_name,
-      practice: p.practice_name,
-      specialty: p.specialties?.[0] ?? "",
-      address,
-      mapsUrl,
-      phone: p.phone,
-      accepting: p.is_accepting_new_patients,
-      preferred: p.is_preferred,
-      distance: p.distance ? `${p.distance.toFixed(1)} mi` : null,
-      languages: p.languages_spoken?.map((l) => l.label) ?? [],
-    };
-  });
-
-  return JSON.stringify({ total: data.total, results: summary });
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse<ChatResponse>> {
