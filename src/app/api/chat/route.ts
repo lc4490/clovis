@@ -158,6 +158,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<ChatResponse>
       body.memberZip,
       body.memberPlanType,
       body.memberPremium,
+      body.language,
     );
 
     // Agentic loop: allow Claude to call tools then produce a final reply

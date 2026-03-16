@@ -1,11 +1,94 @@
 import type { Member } from "@/types";
 
+export type Language = "en" | "es" | "zh";
+
+export const LANGUAGES: { code: Language; nativeLabel: string }[] = [
+  { code: "en", nativeLabel: "English" },
+  { code: "es", nativeLabel: "Español" },
+  { code: "zh", nativeLabel: "中文" },
+];
+
+export const UI_STRINGS: Record<
+  Language,
+  {
+    welcome: (name: string) => string;
+    welcomeChips: { label: string; prompt: string }[];
+    disclaimer: string;
+    textSizeLabel: string;
+    available: string;
+    errorMsg: string;
+    stillNeedHelp: string;
+    callLabel: (phone: string) => string;
+    commonTopics: string;
+    signedInAs: string;
+  }
+> = {
+  en: {
+    welcome: (name) =>
+      `Hello, ${name}! 👋 I'm your Clover Health assistant — here to help you understand your benefits, check on claims, find doctors, and much more.\n\nWhat can I help you with today?`,
+    welcomeChips: [
+      { label: "My benefits",         prompt: "What are my plan benefits?" },
+      { label: "Find a provider",     prompt: "How do I find an in-network doctor or specialist?" },
+      { label: "Check a claim",       prompt: "How do I check the status of a claim?" },
+      { label: "Prior authorization", prompt: "What is prior authorization and how do I get it?" },
+    ],
+    disclaimer:     "General plan information only — not medical advice.",
+    textSizeLabel:  "Text size:",
+    available:      "Available 24/7",
+    errorMsg:       "I'm sorry, I ran into a technical issue. Please try again, or call us at 1-800-801-2060 for immediate help.",
+    stillNeedHelp:  "Still need help?",
+    callLabel:      (phone) => `Call ${phone}`,
+    commonTopics:   "Common Topics",
+    signedInAs:     "Signed In As",
+  },
+  es: {
+    welcome: (name) =>
+      `¡Hola, ${name}! 👋 Soy su asistente de Clover Health — aquí para ayudarle a entender sus beneficios, verificar reclamaciones, encontrar médicos y mucho más.\n\n¿En qué puedo ayudarle hoy?`,
+    welcomeChips: [
+      { label: "Mis beneficios",      prompt: "What are my plan benefits?" },
+      { label: "Buscar proveedor",    prompt: "How do I find an in-network doctor or specialist?" },
+      { label: "Ver reclamación",     prompt: "How do I check the status of a claim?" },
+      { label: "Autorización previa", prompt: "What is prior authorization and how do I get it?" },
+    ],
+    disclaimer:    "Información general del plan — no es consejo médico.",
+    textSizeLabel: "Tamaño de texto:",
+    available:     "Disponible 24/7",
+    errorMsg:      "Lo siento, encontré un problema técnico. Intente de nuevo o llámenos al 1-800-801-2060.",
+    stillNeedHelp: "¿Necesita ayuda?",
+    callLabel:     (phone) => `Llamar al ${phone}`,
+    commonTopics:  "Temas Comunes",
+    signedInAs:    "Conectado Como",
+  },
+  zh: {
+    welcome: (name) =>
+      `您好，${name}！👋 我是您的Clover Health助手 — 帮助您了解福利、查看理赔、寻找医生等。\n\n今天我能为您做什么？`,
+    welcomeChips: [
+      { label: "我的福利", prompt: "What are my plan benefits?" },
+      { label: "查找医生", prompt: "How do I find an in-network doctor or specialist?" },
+      { label: "查看理赔", prompt: "How do I check the status of a claim?" },
+      { label: "预先授权", prompt: "What is prior authorization and how do I get it?" },
+    ],
+    disclaimer:    "仅供一般计划信息参考 — 非医疗建议。",
+    textSizeLabel: "文字大小：",
+    available:     "全天候服务",
+    errorMsg:      "抱歉，遇到技术问题。请重试或拨打 1-800-801-2060 获取帮助。",
+    stillNeedHelp: "仍需帮助？",
+    callLabel:     (phone) => `拨打 ${phone}`,
+    commonTopics:  "常见话题",
+    signedInAs:    "已登录为",
+  },
+};
+
 export const MEMBER: Member = {
   name:      "Margaret T.",
   initials:  "MT",
   memberId:  "CLOV-2847-NJ",
   plan:      "PPO Choice",
+  planId:    "",
+  planType:  "PPO",
+  premium:   0,
   stars:     4,
+  zipCode:   "",
 };
 
 export const QUICK_ACTIONS = [
@@ -26,12 +109,18 @@ export const WELCOME_CHIPS = [
 
 export const PHONE_NUMBER = "1-800-801-2060";
 
+const LANGUAGE_NAMES: Record<string, string> = {
+  es: "Spanish (Español)",
+  zh: "Simplified Chinese (中文)",
+};
+
 export function buildSystemPrompt(
   memberName: string,
   memberPlan: string,
   memberZip?: string,
   memberPlanType?: string,
   memberPremium?: number,
+  language?: string,
 ): string {
   const planDetail = memberPlanType ? ` (${memberPlanType})` : "";
   const premiumLine = memberPremium !== undefined
@@ -40,8 +129,12 @@ export function buildSystemPrompt(
   const zipLine = memberZip
     ? ` Their ZIP code is ${memberZip} — use this automatically when searching for nearby providers without asking for it.`
     : "";
+  const languageLine = language && LANGUAGE_NAMES[language]
+    ? `\n\nIMPORTANT: You must respond ONLY in ${LANGUAGE_NAMES[language]}. All responses — including chip suggestions after CHIPS: — must be written in this language.`
+    : "";
   return `You are Ask Clovis, a friendly and knowledgeable Medicare support assistant for Clover Health members. You're speaking with ${memberName}, a member on the Clover Health ${memberPlan}${planDetail} plan in New Jersey.${premiumLine}${zipLine}`
-    + SYSTEM_PROMPT_BODY;
+    + SYSTEM_PROMPT_BODY
+    + languageLine;
 }
 
 const SYSTEM_PROMPT_BODY = `

@@ -1,14 +1,17 @@
 "use client";
 
-import { QUICK_ACTIONS, PHONE_NUMBER } from "@/lib/constants";
+import { QUICK_ACTIONS, PHONE_NUMBER, UI_STRINGS } from "@/lib/constants";
+import type { Language } from "@/lib/constants";
 import type { Member } from "@/types";
 
 interface SidebarProps {
   onQuickAction: (prompt: string) => void;
   member: Member;
+  language?: Language;
 }
 
-export function Sidebar({ onQuickAction, member }: SidebarProps) {
+export function Sidebar({ onQuickAction, member, language = "en" }: SidebarProps) {
+  const strings = UI_STRINGS[language];
   return (
     <aside className="w-[280px] bg-clover-green flex flex-col flex-shrink-0 relative overflow-hidden">
       {/* Gradient depth overlays */}
@@ -45,7 +48,7 @@ export function Sidebar({ onQuickAction, member }: SidebarProps) {
       {/* Member card */}
       <div className="mx-4 my-5 bg-white/10 border border-white/20 rounded-xl p-4 relative z-20 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
         <p className="text-white/50 text-[10px] uppercase tracking-widest font-medium mb-1.5">
-          Signed In As
+          {strings.signedInAs}
         </p>
         <p className="text-white text-[15px] font-semibold mb-0.5">{member.name}</p>
         <p className="text-white/60 text-xs font-light">Member ID: {member.memberId}</p>
@@ -61,7 +64,7 @@ export function Sidebar({ onQuickAction, member }: SidebarProps) {
 
       {/* Quick actions */}
       <p className="px-4 pb-2 text-[10px] text-white/50 uppercase tracking-widest font-medium relative z-20">
-        Common Topics
+        {strings.commonTopics}
       </p>
 
       <nav className="flex flex-col gap-0.5 relative z-20">
@@ -87,8 +90,8 @@ export function Sidebar({ onQuickAction, member }: SidebarProps) {
         >
           <span className="text-lg">📞</span>
           <div className="flex-1">
-            <p className="text-[12px] font-semibold text-white">Still need help?</p>
-            <p className="text-[11px] text-white/50">Call {PHONE_NUMBER}</p>
+            <p className="text-[12px] font-semibold text-white">{strings.stillNeedHelp}</p>
+            <p className="text-[11px] text-white/50">{strings.callLabel(PHONE_NUMBER)}</p>
           </div>
         </a>
       </div>

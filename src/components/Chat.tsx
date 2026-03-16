@@ -3,35 +3,48 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageBubble, TypingIndicator } from "./MessageBubble";
 import { ChatInput } from "./ChatInput";
-import { WELCOME_CHIPS } from "@/lib/constants";
+import { LANGUAGES, UI_STRINGS } from "@/lib/constants";
 import { buildBotMessage } from "@/lib/utils";
+import type { Language } from "@/lib/constants";
 import type { Member, Message } from "@/types";
 
-function makeWelcome(firstName: string): Message {
+function makeWelcome(firstName: string, lang: Language): Message {
+  const s = UI_STRINGS[lang];
   return {
     id: "welcome",
     role: "assistant",
-    content: `Hello, ${firstName}! 👋 I'm your Clover Health assistant — here to help you understand your benefits, check on claims, find doctors, and much more.\n\nWhat can I help you with today?`,
-    chips: WELCOME_CHIPS.map((c) => c.label),
+    content: s.welcome(firstName),
+    chips: s.welcomeChips.map((c) => c.label),
   };
 }
-
-// Map welcome chip labels back to prompts
-const CHIP_PROMPT_MAP = Object.fromEntries(
-  WELCOME_CHIPS.map((c) => [c.label, c.prompt]),
-);
 
 interface ChatProps {
   onQuickAction: (setter: (prompt: string) => void) => void;
   member: Member;
+  language: Language;
+  onLanguageChange: (lang: Language) => void;
 }
 
-export function Chat({ onQuickAction, member }: ChatProps) {
-  const [messages, setMessages] = useState<Message[]>(() => [makeWelcome(member.name.split(" ")[0])]);
+export function Chat({ onQuickAction, member, language, onLanguageChange }: ChatProps) {
+  const firstName = member.name.split(" ")[0];
+  const strings = UI_STRINGS[language];
+
+  const [messages, setMessages] = useState<Message[]>(() => [makeWelcome(firstName, language)]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const TEXT_SIZES = ["13px", "15px", "17px", "19px", "21px"];
   const [textIdx, setTextIdx] = useState(1);
+
+  // Map welcome chip labels → prompts for current language
+  const chipPromptMap = Object.fromEntries(
+    strings.welcomeChips.map((c) => [c.label, c.prompt]),
+  );
+
+  function handleLanguageChange(lang: Language) {
+    onLanguageChange(lang);
+    setMessages([makeWelcome(firstName, lang)]);
+    setInput("");
+  }
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -73,7 +86,7 @@ export function Chat({ onQuickAction, member }: ChatProps) {
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: history, memberName: member.name, memberPlan: member.plan, memberPlanId: member.planId, memberPlanType: member.planType, memberPremium: member.premium, memberZip: member.zipCode }),
+          body: JSON.stringify({ messages: history, memberName: member.name, memberPlan: member.plan, memberPlanId: member.planId, memberPlanType: member.planType, memberPremium: member.premium, memberZip: member.zipCode, language }),
         });
 
         if (!res.ok) throw new Error("HTTP " + res.status);
@@ -85,9 +98,7 @@ export function Chat({ onQuickAction, member }: ChatProps) {
       } catch {
         setMessages((prev) => [
           ...prev,
-          buildBotMessage(
-            "I'm sorry, I ran into a technical issue. Please try again, or call us at 1-800-801-2060 for immediate help.",
-          ),
+          buildBotMessage(strings.errorMsg),
         ]);
       } finally {
         setLoading(false);
@@ -97,16 +108,16 @@ export function Chat({ onQuickAction, member }: ChatProps) {
   );
 
   const handleSend = useCallback(() => {
-    const prompt = CHIP_PROMPT_MAP[input] ?? input;
+    const prompt = chipPromptMap[input] ?? input;
     handleSendText(prompt);
-  }, [input, handleSendText]);
+  }, [input, handleSendText, chipPromptMap]);
 
   const handleChipClick = useCallback(
     (chip: string) => {
-      const prompt = CHIP_PROMPT_MAP[chip] ?? chip;
+      const prompt = chipPromptMap[chip] ?? chip;
       handleSendText(prompt);
     },
-    [handleSendText],
+    [handleSendText, chipPromptMap],
   );
 
   return (
@@ -129,15 +140,30 @@ export function Chat({ onQuickAction, member }: ChatProps) {
             Hi, {member.name.split(" ")[0]} · {member.plan}
           </p>
         </div>
-        <div className="flex items-center gap-1.5 bg-clover-mint border border-clover-border px-3.5 py-1.5 rounded-full text-[12px] text-clover-green font-medium">
-          <span className="w-[7px] h-[7px] bg-clover-light rounded-full animate-pulse-dot" />
-          Available 24/7
+        <div className="flex items-center gap-2">
+          {/* Language selector */}
+          <div className="flex items-center gap-1 text-[12px] text-clover-mid">
+            <span>🌐</span>
+            <select
+              value={language}
+              onChange={(e) => handleLanguageChange(e.target.value as Language)}
+              className="bg-transparent border-none outline-none cursor-pointer text-[12px] text-clover-mid font-medium pr-1"
+            >
+              {LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code}>{l.nativeLabel}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-1.5 bg-clover-mint border border-clover-border px-3.5 py-1.5 rounded-full text-[12px] text-clover-green font-medium">
+            <span className="w-[7px] h-[7px] bg-clover-light rounded-full animate-pulse-dot" />
+            {strings.available}
+          </div>
         </div>
       </div>
 
       {/* Accessibility bar */}
       <div className="flex items-center gap-2.5 px-7 py-1.5 bg-clover-bg border-b border-clover-border flex-shrink-0">
-        <span className="text-[11px] text-clover-muted mr-1">Text size:</span>
+        <span className="text-[11px] text-clover-muted mr-1">{strings.textSizeLabel}</span>
         <button
           onClick={() => setTextIdx((i) => Math.max(0, i - 1))}
           disabled={textIdx === 0}
@@ -168,7 +194,7 @@ export function Chat({ onQuickAction, member }: ChatProps) {
       {/* Disclaimer */}
       <div className="border-t border-clover-border px-7 py-1.5 text-[11px] text-clover-muted flex items-center gap-2 flex-shrink-0 bg-clover-bg">
         <span className="opacity-60">ⓘ</span>
-        <span>General plan information only — not medical advice.</span>
+        <span>{strings.disclaimer}</span>
       </div>
 
       {/* Input */}

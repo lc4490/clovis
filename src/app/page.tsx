@@ -4,10 +4,12 @@ import { useState, useRef, useCallback } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Chat } from "@/components/Chat";
 import { SetupPage } from "@/components/SetupPage";
+import type { Language } from "@/lib/constants";
 import type { Member } from "@/types";
 
 export default function Home() {
   const [member, setMember] = useState<Member | null>(null);
+  const [language, setLanguage] = useState<Language>("en");
   const sendQuickRef = useRef<(prompt: string) => void>(() => {});
 
   const registerSendQuick = useCallback((fn: (prompt: string) => void) => {
@@ -25,9 +27,9 @@ export default function Home() {
   return (
     <div className="flex h-screen overflow-hidden font-sans text-clover-dark bg-clover-bg">
       <div className="hidden sm:flex h-full">
-        <Sidebar onQuickAction={handleSidebarAction} member={member} />
+        <Sidebar onQuickAction={handleSidebarAction} member={member} language={language} />
       </div>
-      <Chat onQuickAction={registerSendQuick} member={member} />
+      <Chat onQuickAction={registerSendQuick} member={member} language={language} onLanguageChange={setLanguage} />
     </div>
   );
 }

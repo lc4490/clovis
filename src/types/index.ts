@@ -96,6 +96,7 @@ export interface ChatRequest {
   memberPlanType?: string;
   memberPremium?: number;
   memberZip?: string;
+  language?: string;
 }
 
 export interface ChatResponse {
