@@ -44,7 +44,7 @@ function BotBubble({ message, onChipClick, escalate }: MessageBubbleProps) {
   const segments = parseSegments(message.content);
 
   return (
-    <div className="flex gap-3 max-w-[88%] sm:max-w-[72%] animate-fade-up">
+    <div className="flex gap-3 max-w-[96%] sm:max-w-[72%] animate-fade-up">
       {/* Avatar */}
       <div className="w-[34px] h-[34px] rounded-full flex-shrink-0 flex items-center justify-center text-sm bg-clover-pale border-2 border-clover-border mt-0.5">
         🍀
@@ -75,7 +75,7 @@ function BotBubble({ message, onChipClick, escalate }: MessageBubbleProps) {
               <button
                 key={chip}
                 onClick={() => onChipClick(chip)}
-                className="bg-clover-mint border border-clover-light text-clover-green px-3.5 py-1.5 rounded-full text-[13px] font-medium hover:bg-clover-pale hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 transition-all"
+                className="bg-clover-mint border border-clover-light text-clover-green px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[11px] sm:text-[13px] font-medium hover:bg-clover-pale hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 transition-all"
               >
                 {chip}
               </button>

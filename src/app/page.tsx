@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useRef, useCallback, useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Chat } from "@/components/Chat";
 import { SetupPage } from "@/components/SetupPage";
@@ -27,27 +27,20 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden font-sans text-clover-dark bg-clover-bg">
-      {/* Mobile backdrop */}
+    <div className="flex h-[100dvh] overflow-hidden font-sans text-clover-dark bg-clover-bg" style={{ paddingTop: "env(safe-area-inset-top)" }}>
+      {/* Mobile drawer */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-20 sm:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="sm:hidden fixed inset-0 z-40">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} />
+          <div className="absolute inset-y-0 left-0 z-50">
+            <Sidebar onQuickAction={handleSidebarAction} member={member} language={language} onClose={() => setSidebarOpen(false)} />
+          </div>
+        </div>
       )}
 
-      {/* Sidebar — fixed overlay on mobile, static on sm+ */}
-      <div
-        className={`fixed sm:static inset-y-0 left-0 z-30 h-full transition-transform duration-300 sm:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } sm:flex`}
-      >
-        <Sidebar
-          onQuickAction={handleSidebarAction}
-          member={member}
-          language={language}
-          onClose={() => setSidebarOpen(false)}
-        />
+      {/* Sidebar — desktop only */}
+      <div className="hidden sm:flex h-full">
+        <Sidebar onQuickAction={handleSidebarAction} member={member} language={language} />
       </div>
 
       <Chat

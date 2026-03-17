@@ -11,7 +11,11 @@ interface SetupPageProps {
   onLanguageChange: (lang: Language) => void;
 }
 
-export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageProps) {
+export function SetupPage({
+  onComplete,
+  language,
+  onLanguageChange,
+}: SetupPageProps) {
   const s = UI_STRINGS[language].setup;
 
   const [firstName, setFirstName] = useState("");
@@ -52,7 +56,9 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
     e.preventDefault();
     if (!canSubmit || !selectedPlan) return;
 
-    const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(" ");
+    const fullName = [firstName.trim(), lastName.trim()]
+      .filter(Boolean)
+      .join(" ");
     const initials = `${firstName[0]}${lastName[0] ?? ""}`.toUpperCase();
     const memberId = `CLOV-${Math.floor(1000 + Math.random() * 9000)}-NJ`;
 
@@ -70,7 +76,10 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
   }
 
   return (
-    <div className="h-screen bg-clover-bg flex font-sans overflow-hidden">
+    <div
+      className="h-[100dvh] bg-clover-bg flex font-sans overflow-hidden"
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
+    >
       {/* Left branding panel */}
       <div className="hidden lg:flex w-[400px] bg-clover-green flex-col flex-shrink-0 relative overflow-hidden p-10">
         <div className="absolute inset-x-0 top-0 h-52 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
@@ -99,7 +108,8 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
               className="text-[38px] text-white font-normal leading-tight mb-4"
               style={{ fontFamily: "DM Serif Display, serif" }}
             >
-              {UI_STRINGS[language].askClovis}{" "}<em style={{ fontStyle: "italic" }}>Clovis</em>
+              {UI_STRINGS[language].askClovis}{" "}
+              <em style={{ fontStyle: "italic" }}>Clovis</em>
             </h1>
             <p className="text-white/65 text-[14px] leading-relaxed mb-10">
               {s.subtitle}
@@ -122,13 +132,13 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
       </div>
 
       {/* Right form panel */}
-      <div className="flex-1 overflow-y-auto flex flex-col items-center p-5 sm:p-8">
+      <div className="flex-1 overflow-y-auto flex flex-col items-center p-5 sm:p-8 pb-[max(96px,env(safe-area-inset-bottom))]">
         <div className="w-full max-w-[420px] my-auto">
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 mb-5 sm:mb-8">
             <div
               className="w-7 h-7 flex items-center justify-center text-sm"
-              style={{ background: "#52B788", borderRadius: "50% 4px 50% 4px" }}
+              style={{ background: "#7ECBA5", borderRadius: "50% 4px 50% 4px" }}
             >
               🍀
             </div>
@@ -162,17 +172,29 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
               </select>
               <svg
                 className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-clover-muted"
-                viewBox="0 0 12 12" fill="none"
+                viewBox="0 0 12 12"
+                fill="none"
               >
-                <path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M2.5 4.5L6 8l3.5-3.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </div>
           </div>
-          <p className="text-[13px] text-clover-muted mb-5 sm:mb-8">{s.subtitle}</p>
+          <p className="text-[13px] text-clover-muted mb-5 sm:mb-8">
+            {s.subtitle}
+          </p>
 
-          <form onSubmit={plans ? handleSubmit : handleFindPlans} className="flex flex-col gap-3 sm:gap-5">
+          <form
+            onSubmit={plans ? handleSubmit : handleFindPlans}
+            className="flex flex-col gap-3 sm:gap-5"
+          >
             {/* Name row — stacked on mobile, side-by-side on sm+ */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-row gap-3">
               <div className="flex-1 flex flex-col gap-1.5">
                 <label className="text-[11px] text-clover-mid uppercase tracking-wider font-medium">
                   {s.firstName}
@@ -182,7 +204,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder={s.firstNamePlaceholder}
-                  className="bg-white border border-clover-border rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
+                  className="bg-white border border-clover-border rounded-lg px-2 py-2 sm:rounded-xl sm:px-4 sm:py-3 text-[13px] sm:text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
                   autoFocus
                 />
               </div>
@@ -195,7 +217,7 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder={s.lastNamePlaceholder}
-                  className="bg-white border border-clover-border rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
+                  className="bg-white border border-clover-border rounded-lg px-2 py-2 sm:rounded-xl sm:px-4 sm:py-3 text-[13px] sm:text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
                 />
               </div>
             </div>
@@ -213,15 +235,19 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
                   value={zip}
                   onChange={(e) => {
                     setZip(e.target.value.replace(/\D/g, ""));
-                    if (plans) { setPlans(null); setSelectedPlanId(null); setPlansError(null); }
+                    if (plans) {
+                      setPlans(null);
+                      setSelectedPlanId(null);
+                      setPlansError(null);
+                    }
                   }}
                   placeholder="07030"
-                  className="flex-1 bg-white border border-clover-border rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
+                  className="flex-1 bg-white border border-clover-border rounded-lg px-2 py-2 sm:rounded-xl sm:px-4 sm:py-3 text-[13px] sm:text-[14px] text-clover-dark placeholder:text-clover-muted outline-none focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
                 />
                 <button
                   type="submit"
                   disabled={!canFindPlans || loading}
-                  className="px-3 sm:px-4 py-2.5 sm:py-3 bg-clover-green text-white rounded-xl text-[13px] font-medium hover:bg-clover-light disabled:opacity-40 disabled:cursor-not-allowed transition-all whitespace-nowrap shadow-[0_1px_3px_rgba(82,183,136,0.4)]"
+                  className="px-2.5 sm:px-4 py-2 sm:py-3 bg-clover-green text-white rounded-lg sm:rounded-xl text-[12px] sm:text-[13px] font-medium hover:bg-clover-light disabled:opacity-40 disabled:cursor-not-allowed transition-all whitespace-nowrap shadow-[0_1px_3px_rgba(82,183,136,0.4)]"
                 >
                   {loading ? s.searching : s.findPlans}
                 </button>
@@ -279,7 +305,11 @@ export function SetupPage({ onComplete, language, onLanguageChange }: SetupPageP
                             }`}
                           >
                             {isSelected && (
-                              <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 10 8" fill="none">
+                              <svg
+                                className="w-2.5 h-2.5 text-white"
+                                viewBox="0 0 10 8"
+                                fill="none"
+                              >
                                 <path
                                   d="M1 4l2.5 2.5L9 1"
                                   stroke="currentColor"

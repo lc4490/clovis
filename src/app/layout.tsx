@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   title: "Ask Clovis — Member Support",
   description: "Clover Health AI member assistant",
   icons: { icon: "/icon.png" },
+  viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
 };
 
 export default function RootLayout({
