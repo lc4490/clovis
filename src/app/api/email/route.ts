@@ -38,7 +38,8 @@ function stripReplyQuote(text: string): string {
     if (/^On .+wrote:$/i.test(line.trim())) break;
 
     // Stop at Outlook-style divider
-    if (/^-{4,}(Original Message|Forwarded Message)-{4,}/i.test(line.trim())) break;
+    if (/^-{4,}(Original Message|Forwarded Message)-{4,}/i.test(line.trim()))
+      break;
 
     // Skip quoted lines
     if (line.startsWith(">")) continue;
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const fromRaw = formData.get("from") as string | null;
   const subject = (formData.get("subject") as string | null) ?? "(no subject)";
   const textBody = (formData.get("text") as string | null) ?? "";
+  console.log("RAW EMAIL BODY:", textBody);
 
   if (!fromRaw || !textBody) {
     return new NextResponse("Bad Request", { status: 400 });
@@ -92,7 +94,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   // Load conversation history from Redis
   const key = historyKey(senderEmail);
-  const history: HistoryMessage[] = (await redis.get<HistoryMessage[]>(key)) ?? [];
+  const history: HistoryMessage[] =
+    (await redis.get<HistoryMessage[]>(key)) ?? [];
 
   const trimmed = history.slice(-(MAX_HISTORY_TURNS * 2));
   const messages = [...trimmed, { role: "user" as Role, content: userMessage }];
@@ -118,7 +121,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const replyText = formatForEmail(reply);
   const replySubject = subject.startsWith("Re:") ? subject : `Re: ${subject}`;
-  const fromAddress = process.env.EMAIL_FROM_ADDRESS ?? "ask@cloverhealth.example.com";
+  const fromAddress =
+    process.env.EMAIL_FROM_ADDRESS ?? "ask@cloverhealth.example.com";
 
   try {
     await sgMail.send({
