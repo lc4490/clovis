@@ -14,9 +14,10 @@ interface ChatInputProps {
   disabled: boolean;
   placeholder?: string;
   hint?: string;
+  fontSize?: string;
 }
 
-export function ChatInput({ value, onChange, onSend, disabled, placeholder, hint }: ChatInputProps) {
+export function ChatInput({ value, onChange, onSend, disabled, placeholder, hint, fontSize }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const autoResize = useCallback(() => {
@@ -53,7 +54,8 @@ export function ChatInput({ value, onChange, onSend, disabled, placeholder, hint
           placeholder={placeholder ?? "Type your question here…"}
           rows={1}
           disabled={disabled}
-          className="flex-1 bg-transparent border-none outline-none text-[15px] text-clover-dark placeholder:text-clover-muted resize-none max-h-[120px] min-h-[24px] leading-relaxed font-sans disabled:opacity-50"
+          className="flex-1 bg-transparent border-none outline-none text-clover-dark placeholder:text-clover-muted resize-none max-h-[120px] min-h-[24px] leading-relaxed font-sans disabled:opacity-50"
+          style={{ fontSize }}
         />
         <button
           onClick={onSend}

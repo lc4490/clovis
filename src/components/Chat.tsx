@@ -24,6 +24,9 @@ interface ChatProps {
   language: Language;
   onLanguageChange: (lang: Language) => void;
   onSidebarToggle?: () => void;
+  textIdx: number;
+  onTextIdxChange: (i: number) => void;
+  textSizes: string[];
 }
 
 export function Chat({
@@ -32,6 +35,9 @@ export function Chat({
   language,
   onLanguageChange,
   onSidebarToggle,
+  textIdx,
+  onTextIdxChange,
+  textSizes,
 }: ChatProps) {
   const firstName = member.name.split(" ")[0];
   const strings = UI_STRINGS[language];
@@ -41,8 +47,6 @@ export function Chat({
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const TEXT_SIZES = ["13px", "15px", "17px", "19px", "21px"];
-  const [textIdx, setTextIdx] = useState(1);
 
   // Map welcome chip labels → prompts for current language
   const chipPromptMap = Object.fromEntries(
@@ -138,19 +142,19 @@ export function Chat({
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Top bar */}
-      <div className="px-4 sm:px-7 py-[18px] bg-white border-b border-clover-border flex items-center gap-3 flex-shrink-0 shadow-[0_1px_0_0_rgba(0,0,0,0.04)]">
+      <div className="px-4 sm:px-8 py-5 bg-white border-b border-clover-border flex items-center gap-4 flex-shrink-0 shadow-sm">
         {/* Logo button — mobile only, opens sidebar drawer */}
         <button
-          className="sm:hidden w-8 h-8 flex items-center justify-center text-base flex-shrink-0"
-          style={{ background: "#7ECBA5", borderRadius: "50% 4px 50% 4px" }}
+          className="sm:hidden w-9 h-9 flex items-center justify-center text-base flex-shrink-0 shadow-sm"
+          style={{ background: "#7ECBA5", borderRadius: "50% 6px 50% 6px" }}
           onClick={onSidebarToggle}
           aria-label="Open menu"
         >
           🍀
         </button>
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 flex flex-col gap-1">
           <h1
-            className="text-[20px] sm:text-[22px] text-clover-dark font-normal leading-tight"
+            className="text-[28px] sm:text-[32px] text-clover-dark font-normal leading-none tracking-tight"
             style={{ fontFamily: "DM Serif Display, serif" }}
           >
             {strings.askClovis}{" "}
@@ -158,37 +162,50 @@ export function Chat({
               Clovis
             </em>
           </h1>
-          <p className="text-[11px] text-clover-muted mt-0.5">
-            Hi, {member.name.split(" ")[0]} · {member.plan}
-          </p>
+          <div className="inline-flex items-center gap-2 bg-clover-mint border border-clover-light/50 rounded-full pl-2 pr-3 py-1 w-fit">
+            <span className="relative flex h-2 w-2 flex-shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-clover-light opacity-60" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-clover-green" />
+            </span>
+            <span className="text-[12px] text-clover-green font-semibold leading-none">{strings.available}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5 bg-clover-mint border border-clover-border px-2.5 sm:px-3.5 py-1.5 rounded-full text-[12px] text-clover-green font-medium flex-shrink-0">
-          <span className="w-[7px] h-[7px] bg-clover-light rounded-full animate-pulse-dot flex-shrink-0" />
-          <span>{strings.available}</span>
-        </div>
+
+        {/* Log out */}
+        <button
+          onClick={() => window.location.reload()}
+          className="hidden sm:flex items-center gap-2 bg-clover-bg border border-clover-border rounded-xl px-3.5 py-2 text-[13px] text-clover-mid font-medium hover:bg-clover-pale hover:border-clover-light hover:text-clover-dark transition-all flex-shrink-0"
+        >
+          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          Sign out
+        </button>
       </div>
 
       {/* Accessibility bar */}
-      <div className="flex items-center gap-2.5 px-4 sm:px-7 py-1.5 bg-clover-bg border-b border-clover-border flex-shrink-0">
-        <span className="text-[11px] text-clover-muted mr-1">
+      <div className="flex items-center gap-3 px-4 sm:px-7 py-2.5 bg-clover-bg border-b border-clover-border flex-shrink-0">
+        <span className="text-[13px] font-semibold text-clover-dark mr-1">
           {strings.textSizeLabel}
         </span>
         <button
-          onClick={() => setTextIdx((i) => Math.max(0, i - 1))}
+          onClick={() => onTextIdxChange(Math.max(0, textIdx - 1))}
           disabled={textIdx === 0}
-          className="text-[13px] w-6 h-6 flex items-center justify-center border rounded-md transition-all font-sans bg-white border-clover-border text-clover-mid hover:bg-clover-pale hover:border-clover-light hover:text-clover-green disabled:opacity-30 disabled:cursor-not-allowed"
+          className="text-[16px] w-8 h-8 flex items-center justify-center border-2 rounded-lg transition-all font-sans bg-white border-clover-border text-clover-mid hover:bg-clover-pale hover:border-clover-light hover:text-clover-green disabled:opacity-30 disabled:cursor-not-allowed font-bold"
         >
           −
         </button>
-        <span className="text-[11px] text-clover-muted w-6 text-center">
-          {TEXT_SIZES[textIdx]}
+        <span className="text-[13px] font-semibold text-clover-dark w-8 text-center">
+          {textSizes[textIdx]}
         </span>
         <button
           onClick={() =>
-            setTextIdx((i) => Math.min(TEXT_SIZES.length - 1, i + 1))
+            onTextIdxChange(Math.min(textSizes.length - 1, textIdx + 1))
           }
-          disabled={textIdx === TEXT_SIZES.length - 1}
-          className="text-[13px] w-6 h-6 flex items-center justify-center border rounded-md transition-all font-sans bg-white border-clover-border text-clover-mid hover:bg-clover-pale hover:border-clover-light hover:text-clover-green disabled:opacity-30 disabled:cursor-not-allowed"
+          disabled={textIdx === textSizes.length - 1}
+          className="text-[16px] w-8 h-8 flex items-center justify-center border-2 rounded-lg transition-all font-sans bg-white border-clover-border text-clover-mid hover:bg-clover-pale hover:border-clover-light hover:text-clover-green disabled:opacity-30 disabled:cursor-not-allowed font-bold"
         >
           +
         </button>
@@ -198,7 +215,8 @@ export function Chat({
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value as Language)}
-            className="appearance-none bg-white border border-clover-border rounded-lg pl-2.5 pr-7 py-1 text-[11px] text-clover-mid font-medium outline-none cursor-pointer hover:border-clover-light focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
+            className="appearance-none bg-white border border-clover-border rounded-lg pl-2.5 pr-7 py-1 text-clover-mid font-medium outline-none cursor-pointer hover:border-clover-light focus:border-clover-light focus:shadow-[0_0_0_3px_rgba(82,183,136,0.1)] transition-all"
+            style={{ fontSize: textSizes[textIdx] }}
           >
             {LANGUAGES.map((l) => (
               <option key={l.code} value={l.code}>
@@ -225,7 +243,7 @@ export function Chat({
       {/* Messages */}
       <div
         className={`flex-1 overflow-y-auto px-4 sm:px-7 pt-5 sm:pt-7 pb-5 flex flex-col gap-[18px] scroll-smooth [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-clover-border [&::-webkit-scrollbar-thumb]:rounded`}
-        style={{ fontSize: TEXT_SIZES[textIdx] }}
+        style={{ fontSize: textSizes[textIdx] }}
       >
         {messages.map((msg) => (
           <MessageBubble
@@ -262,6 +280,7 @@ export function Chat({
         disabled={loading}
         placeholder={strings.inputPlaceholder}
         hint={strings.inputHint}
+        fontSize={textSizes[textIdx]}
       />
     </div>
   );

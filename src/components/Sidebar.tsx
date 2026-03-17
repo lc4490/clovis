@@ -9,9 +9,10 @@ interface SidebarProps {
   member: Member;
   language?: Language;
   onClose?: () => void;
+  fontSize?: string;
 }
 
-export function Sidebar({ onQuickAction, member, language = "en", onClose }: SidebarProps) {
+export function Sidebar({ onQuickAction, member, language = "en", onClose, fontSize = "16px" }: SidebarProps) {
   const strings = UI_STRINGS[language];
   return (
     <aside className="w-[280px] h-full bg-clover-green flex flex-col flex-shrink-0 relative overflow-hidden">
@@ -58,7 +59,7 @@ export function Sidebar({ onQuickAction, member, language = "en", onClose }: Sid
           <p className="text-white/50 text-[10px] uppercase tracking-widest font-medium mb-1.5">
             {strings.signedInAs}
           </p>
-          <p className="text-white text-[15px] font-semibold mb-0.5">{member.name}</p>
+          <p className="text-white font-semibold mb-0.5" style={{ fontSize }}>{member.name}</p>
           <p className="text-white/60 text-xs font-light">{strings.memberId}: {member.memberId}</p>
           <div className="mt-2.5 pt-2.5 border-t border-white/10 flex items-center justify-between">
             <span className="text-[11px] bg-clover-light text-white px-2 py-0.5 rounded-full font-medium">
@@ -85,7 +86,7 @@ export function Sidebar({ onQuickAction, member, language = "en", onClose }: Sid
               <div className="w-7 h-7 bg-white/[0.15] rounded-md flex items-center justify-center text-sm flex-shrink-0 group-hover:bg-white/25 transition-colors">
                 {icon}
               </div>
-              <span className="text-[13px] text-white/90 font-normal group-hover:text-white transition-colors">{label}</span>
+              <span className="text-white/90 font-normal group-hover:text-white transition-colors" style={{ fontSize }}>{label}</span>
             </button>
           ))}
         </nav>
@@ -99,8 +100,8 @@ export function Sidebar({ onQuickAction, member, language = "en", onClose }: Sid
         >
           <span className="text-lg">📞</span>
           <div className="flex-1">
-            <p className="text-[12px] font-semibold text-white">{strings.stillNeedHelp}</p>
-            <p className="text-[11px] text-white/50">{strings.callLabel(PHONE_NUMBER)}</p>
+            <p className="font-semibold text-white" style={{ fontSize }}>{strings.stillNeedHelp}</p>
+            <p className="text-white/50" style={{ fontSize }}>{strings.callLabel(PHONE_NUMBER)}</p>
           </div>
         </a>
       </div>

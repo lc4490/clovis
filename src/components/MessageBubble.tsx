@@ -75,7 +75,7 @@ function BotBubble({ message, onChipClick, escalate }: MessageBubbleProps) {
               <button
                 key={chip}
                 onClick={() => onChipClick(chip)}
-                className="bg-clover-mint border border-clover-light text-clover-green px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[11px] sm:text-[13px] font-medium hover:bg-clover-pale hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 transition-all"
+                className="bg-clover-mint border border-clover-light text-clover-green px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full font-medium hover:bg-clover-pale hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 transition-all"
               >
                 {chip}
               </button>
@@ -85,7 +85,7 @@ function BotBubble({ message, onChipClick, escalate }: MessageBubbleProps) {
 
         {/* Escalation notice */}
         {message.showEscalate && (
-          <div className="mt-3 bg-amber-50 border border-amber-200 rounded-[10px] px-3.5 py-3 text-[13px] text-amber-900 flex gap-2.5 items-center">
+          <div className="mt-3 bg-amber-50 border border-amber-200 rounded-[10px] px-3.5 py-3 text-amber-900 flex gap-2.5 items-center">
             <span className="text-base">📞</span>
             <span>
               {escalate?.text ?? "A live agent can help with this."}{" "}
