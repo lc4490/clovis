@@ -73,6 +73,7 @@ export function Chat({
   const [loadingStatus, setLoadingStatus] = useState("general");
   const [showMemberCard, setShowMemberCard] = useState(false);
   const [showVoiceMode, setShowVoiceMode] = useState(false);
+  const [pendingLang, setPendingLang] = useState<Language | null>(null);
 
   const displayName = isLegacyMode ? legacyMember!.name : verifiedMember?.name ?? null;
   const displayInitials = isLegacyMode
@@ -98,10 +99,22 @@ export function Chat({
     strings.welcomeChips.map((c) => [c.label, c.prompt]),
   );
 
-  function handleLanguageChange(lang: Language) {
+  function applyLanguageChange(lang: Language) {
     onLanguageChange(lang);
     if (authStage !== "authenticated") setMessages([makeAuthWelcome(UI_STRINGS[lang].authWelcome)]);
+    else setMessages([]);
     setInput("");
+    setPendingLang(null);
+  }
+
+  function handleLanguageChange(lang: Language) {
+    if (lang === language) return;
+    const hasHistory = messages.some((m) => m.id !== "auth-welcome" && m.id !== "welcome");
+    if (hasHistory) {
+      setPendingLang(lang);
+    } else {
+      applyLanguageChange(lang);
+    }
   }
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -242,6 +255,29 @@ export function Chat({
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
+      {pendingLang && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl p-6 mx-4 max-w-sm w-full">
+            <p className="text-clover-dark font-semibold text-base mb-1">{strings.langSwitchTitle}</p>
+            <p className="text-clover-mid text-sm mb-5">{strings.langSwitchBody}</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setPendingLang(null)}
+                className="flex-1 py-2 rounded-lg border border-clover-border text-clover-mid text-sm font-medium hover:bg-gray-50 transition-colors"
+              >
+                {strings.langSwitchCancel}
+              </button>
+              <button
+                onClick={() => applyLanguageChange(pendingLang)}
+                className="flex-1 py-2 rounded-lg bg-clover-green text-white text-sm font-medium hover:bg-clover-dark transition-colors"
+              >
+                {strings.langSwitchConfirm}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showVoiceMode && (
         <VoiceMode
           onClose={() => setShowVoiceMode(false)}

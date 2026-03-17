@@ -38,6 +38,11 @@ export const UI_STRINGS: Record<
     callLabel: (phone: string) => string;
     commonTopics: string;
     signedInAs: string;
+    // Language switch warning
+    langSwitchTitle: string;
+    langSwitchBody: string;
+    langSwitchConfirm: string;
+    langSwitchCancel: string;
     // Auth flow
     verifyingIdentity: string;
     identityVerificationRequired: string;
@@ -142,6 +147,10 @@ export const UI_STRINGS: Record<
     callLabel: (phone) => `Call ${phone}`,
     commonTopics: "Common Topics",
     signedInAs: "Signed In As",
+    langSwitchTitle: "Switch language?",
+    langSwitchBody: "Switching languages will clear your current conversation.",
+    langSwitchConfirm: "Switch & clear chat",
+    langSwitchCancel: "Cancel",
     verifyingIdentity: "Verifying identity…",
     identityVerificationRequired: "Identity verification required",
     authWelcome:
@@ -254,6 +263,10 @@ export const UI_STRINGS: Record<
     callLabel: (phone) => `Llamar al ${phone}`,
     commonTopics: "Temas Comunes",
     signedInAs: "Conectado Como",
+    langSwitchTitle: "¿Cambiar idioma?",
+    langSwitchBody: "Cambiar el idioma borrará su conversación actual.",
+    langSwitchConfirm: "Cambiar y borrar chat",
+    langSwitchCancel: "Cancelar",
     verifyingIdentity: "Verificando identidad…",
     identityVerificationRequired: "Verificación de identidad requerida",
     authWelcome:
@@ -322,6 +335,10 @@ export const UI_STRINGS: Record<
     callLabel: (phone) => `拨打 ${phone}`,
     commonTopics: "常见话题",
     signedInAs: "已登录为",
+    langSwitchTitle: "切换语言？",
+    langSwitchBody: "切换语言将清除您当前的对话记录。",
+    langSwitchConfirm: "切换并清除对话",
+    langSwitchCancel: "取消",
     verifyingIdentity: "正在验证身份…",
     identityVerificationRequired: "需要身份验证",
     authWelcome:
