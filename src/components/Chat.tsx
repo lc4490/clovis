@@ -47,6 +47,16 @@ export function Chat({
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState("general");
+
+  function detectLoadingStatus(text: string): string {
+    const t = text.toLowerCase();
+    if (/doctor|provider|specialist|in.?network|physician|dentist|facility|find a/.test(t))
+      return "provider";
+    if (/drug|medication|prescription|formulary|pill|refill|covered|coverage/.test(t))
+      return "formulary";
+    return "general";
+  }
 
   // Map welcome chip labels → prompts for current language
   const chipPromptMap = Object.fromEntries(
@@ -89,6 +99,7 @@ export function Chat({
       setMessages((prev) => [...prev, userMsg]);
       setInput("");
       setLoading(true);
+      setLoadingStatus(detectLoadingStatus(trimmed));
 
       // Build conversation history for API (exclude welcome, only real turns)
       const history = [...messages, userMsg]
@@ -262,7 +273,7 @@ export function Chat({
             }}
           />
         ))}
-        {loading && <TypingIndicator />}
+        {loading && <TypingIndicator status={loadingStatus} />}
         <div ref={messagesEndRef} />
       </div>
 

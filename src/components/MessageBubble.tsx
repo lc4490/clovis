@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { parseSegments, parseBold, type InlinePart } from "@/lib/utils";
 import { PHONE_NUMBER } from "@/lib/constants";
 import type { Message } from "@/types";
@@ -122,20 +123,55 @@ export function MessageBubble({ message, onChipClick, initials, escalate }: Mess
   return <BotBubble message={message} onChipClick={onChipClick} escalate={escalate} />;
 }
 
-export function TypingIndicator() {
+const LOADING_MESSAGES: Record<string, string[]> = {
+  provider: [
+    "Searching for providers…",
+    "Checking availability…",
+    "Reviewing in-network status…",
+    "Almost there…",
+  ],
+  formulary: [
+    "Checking your formulary…",
+    "Looking up drug coverage…",
+    "Reviewing tier and restrictions…",
+    "Almost there…",
+  ],
+  general: [
+    "Thinking…",
+    "Looking that up…",
+    "Reviewing your benefits…",
+    "Almost there…",
+  ],
+};
+
+export function TypingIndicator({ status = "general" }: { status?: string }) {
+  const messages = LOADING_MESSAGES[status] ?? LOADING_MESSAGES.general;
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    setIdx(0);
+    const interval = setInterval(() => {
+      setIdx((i) => Math.min(i + 1, messages.length - 1));
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [status, messages.length]);
+
   return (
     <div className="flex gap-3 max-w-[88%] sm:max-w-[72%]">
       <div className="w-[34px] h-[34px] rounded-full flex-shrink-0 flex items-center justify-center text-sm bg-clover-pale border-2 border-clover-border mt-0.5">
         🍀
       </div>
-      <div className="bg-white border border-clover-border rounded-2xl rounded-tl-[4px] px-5 py-[14px] shadow-[0_2px_12px_rgba(0,0,0,0.07)] flex gap-[5px] items-center">
-        {[0, 150, 300].map((delay) => (
-          <span
-            key={delay}
-            className="w-[7px] h-[7px] bg-clover-light rounded-full inline-block animate-bounce-dot opacity-80"
-            style={{ animationDelay: `${delay}ms` }}
-          />
-        ))}
+      <div className="bg-white border border-clover-border rounded-2xl rounded-tl-[4px] px-5 py-[14px] shadow-[0_2px_12px_rgba(0,0,0,0.07)] flex flex-col gap-2">
+        <span className="text-[13px] text-clover-muted italic">{messages[idx]}</span>
+        <div className="flex gap-[5px] items-center">
+          {[0, 150, 300].map((delay) => (
+            <span
+              key={delay}
+              className="w-[6px] h-[6px] bg-clover-light rounded-full inline-block animate-bounce-dot opacity-80"
+              style={{ animationDelay: `${delay}ms` }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
