@@ -4,6 +4,7 @@ import { useState } from "react";
 import { LANGUAGES, UI_STRINGS } from "@/lib/constants";
 import type { Language } from "@/lib/constants";
 import type { Member, CloverPlan } from "@/types";
+import { FloatingWidget } from "./FloatingWidget";
 
 interface SetupPageProps {
   onComplete: (member: Member) => void;
@@ -121,7 +122,9 @@ export function SetupPage({
                   <span className="w-8 h-8 bg-white/15 rounded-lg flex items-center justify-center text-base flex-shrink-0">
                     {icon}
                   </span>
-                  <span className="text-white/90 text-[17px] leading-snug">{text}</span>
+                  <span className="text-white/90 text-[17px] leading-snug">
+                    {text}
+                  </span>
                 </div>
               ))}
             </div>
@@ -256,7 +259,9 @@ export function SetupPage({
 
             {/* Error */}
             {plansError && (
-              <p className="text-[16px] text-red-500 -mt-1 leading-relaxed">{plansError}</p>
+              <p className="text-[16px] text-red-500 -mt-1 leading-relaxed">
+                {plansError}
+              </p>
             )}
 
             {/* Plan cards */}
@@ -341,6 +346,7 @@ export function SetupPage({
           </form>
         </div>
       </div>
+      <FloatingWidget />
     </div>
   );
 }

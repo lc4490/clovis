@@ -48,12 +48,21 @@ export function Chat({
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState("general");
+  const [showMemberCard, setShowMemberCard] = useState(false);
 
   function detectLoadingStatus(text: string): string {
     const t = text.toLowerCase();
-    if (/doctor|provider|specialist|in.?network|physician|dentist|facility|find a/.test(t))
+    if (
+      /doctor|provider|specialist|in.?network|physician|dentist|facility|find a/.test(
+        t,
+      )
+    )
       return "provider";
-    if (/drug|medication|prescription|formulary|pill|refill|covered|coverage/.test(t))
+    if (
+      /drug|medication|prescription|formulary|pill|refill|covered|coverage/.test(
+        t,
+      )
+    )
       return "formulary";
     return "general";
   }
@@ -153,7 +162,7 @@ export function Chat({
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Top bar */}
-      <div className="px-4 sm:px-8 py-5 bg-white border-b border-clover-border flex items-center gap-4 flex-shrink-0 shadow-sm">
+      <div className="px-4 sm:px-8 py-5 bg-white border-b border-clover-border flex items-center gap-4 flex-shrink-0 shadow-sm relative">
         {/* Logo button — mobile only, opens sidebar drawer */}
         <button
           className="sm:hidden w-9 h-9 flex items-center justify-center text-base flex-shrink-0 shadow-sm"
@@ -178,22 +187,41 @@ export function Chat({
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-clover-light opacity-60" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-clover-green" />
             </span>
-            <span className="text-[12px] text-clover-green font-semibold leading-none">{strings.available}</span>
+            <span className="text-[12px] text-clover-green font-semibold leading-none">
+              {strings.available}
+            </span>
           </div>
         </div>
 
-        {/* Log out */}
-        <button
-          onClick={() => window.location.reload()}
-          className="hidden sm:flex items-center gap-2 bg-clover-bg border border-clover-border rounded-xl px-3.5 py-2 text-[13px] text-clover-mid font-medium hover:bg-clover-pale hover:border-clover-light hover:text-clover-dark transition-all flex-shrink-0"
-        >
-          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-          Sign out
-        </button>
+        <div className="relative flex-shrink-0">
+          <button
+            onClick={() => setShowMemberCard((v) => !v)}
+            className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-white hover:opacity-90 active:scale-95 transition-all shadow-sm"
+            style={{ background: "#52B788" }}
+            aria-label="View membership card"
+            title={member.name}
+          >
+            {member.initials}
+          </button>
+
+          {/* Member card dropdown */}
+          {showMemberCard && (
+            <>
+              <div className="fixed inset-0 z-20" onClick={() => setShowMemberCard(false)} />
+              <div
+                className="absolute top-[calc(100%+6px)] right-0 z-30 w-60 rounded-xl shadow-xl p-4 border border-white/30"
+                style={{ background: "#52B788" }}
+              >
+                <p className="text-white font-semibold text-[14px] mb-0.5">{member.name}</p>
+                <p className="text-white/60 text-xs font-light">ID: {member.memberId}</p>
+                <div className="mt-2.5 pt-2.5 border-t border-white/20 flex items-center justify-between">
+                  <span className="text-[11px] bg-clover-light text-white px-2 py-0.5 rounded-full font-medium">{member.plan}</span>
+                  <span className="text-[11px] text-white/60">{"⭐".repeat(member.stars)} {member.stars}-Star</span>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Accessibility bar */}
