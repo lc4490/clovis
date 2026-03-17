@@ -1,0 +1,1591 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Clover Health | Medicare Provider | Medicare Advantage PPO &amp; HMO
+    </title>
+    <meta
+      name="description"
+      content="With most plans at $0/month, Clover is a Medicare Advantage plan giving members more coverage for less cost, including dental, vision, hearing &amp; more."
+    />
+
+    <!-- Calibre font from Clover CDN -->
+    <style>
+      @font-face {
+        font-family: "Calibre";
+        src: url("https://cdn.cloverhealth.com/filer_cloudrun_public/fonts/CalibreWeb/CalibreWeb-Regular.woff2")
+          format("woff2");
+        font-weight: 400;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Calibre";
+        src: url("https://cdn.cloverhealth.com/filer_cloudrun_public/fonts/CalibreWeb/CalibreWeb-Medium.woff2")
+          format("woff2");
+        font-weight: 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Calibre";
+        src: url("https://cdn.cloverhealth.com/filer_cloudrun_public/fonts/CalibreWeb/CalibreWeb-Semibold.woff2")
+          format("woff2");
+        font-weight: 600;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Calibre";
+        src: url("https://cdn.cloverhealth.com/filer_cloudrun_public/fonts/CalibreWeb/CalibreWeb-Bold.woff2")
+          format("woff2");
+        font-weight: 700;
+        font-display: swap;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --green: #0e4d43;
+        --green-dark: #17372f;
+        --green-hover: #1d7a65;
+        --green-light: #b2e6d3;
+        --green-pale: #e8f7f2;
+        --purple: #5c3fa0;
+        --purple-hover: #4a3282;
+        --purple-light: #ede8f9;
+        --lavender: #ede8f5;
+        --text-dark: #1a1a1a;
+        --text-mid: #444;
+        --text-muted: #666;
+        --border: #ddd;
+        --white: #fff;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family:
+          "Calibre",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Helvetica,
+          Arial,
+          sans-serif;
+        color: var(--text-dark);
+        background: var(--white);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+      button {
+        cursor: pointer;
+        font-family: inherit;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 48px;
+      }
+
+      /* ════════════════════════════════
+         ALERT BAR
+      ════════════════════════════════ */
+      .alert-bar {
+        background: #e3d7f0;
+        padding: 8px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 40px;
+        position: relative;
+      }
+      .alert-bar-text {
+        font-size: 18.5px;
+        color: var(--text-dark);
+        font-weight: 500;
+      }
+      .alert-bar-cta {
+        background: #3d1955;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 16px;
+        font-size: 15px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.15s;
+      }
+      .alert-bar-cta:hover {
+        background: var(--purple-hover);
+      }
+      .alert-bar-close {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        font-size: 40px;
+        cursor: pointer;
+        color: #666;
+        line-height: 1;
+        padding: 4px 8px;
+      }
+      .alert-bar-close:hover {
+        color: #333;
+      }
+
+      /* ════════════════════════════════
+         HEADER — TWO ROWS
+      ════════════════════════════════ */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      /* Row 1: Logo + Utility */
+      .header-top {
+        background: #0e4d43;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .header-top-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 90px;
+        padding: 0 28px;
+      }
+      .nav-wordmark {
+        font-size: 40px;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: -0.3px;
+        line-height: 1;
+        text-decoration: none;
+        flex-shrink: 0;
+      }
+      .header-top-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      /* Shared base for utility buttons */
+      .btn-nav-util {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 10px;
+        padding: 15px 30px;
+        font-size: 22px;
+        font-weight: 400;
+        font-family: inherit;
+        cursor: pointer;
+        white-space: nowrap;
+        transition:
+          background 0.15s,
+          border-color 0.15s,
+          color 0.15s;
+      }
+      .btn-nav-util .fa-chevron-down {
+        font-size: 18px;
+        opacity: 1;
+      }
+      /* Call Us — white border, transparent bg */
+      .btn-nav-call {
+        background: transparent;
+        color: #fff;
+        border: 1.5px solid #fff;
+      }
+      .btn-nav-call:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+      /* My Clover — solid white bg, dark text */
+      .btn-nav-myclover {
+        background: #e3d7f0;
+        color: #3d1955;
+        border: 1.5px solid #fff;
+        font-weight: 400;
+      }
+      .btn-nav-myclover:hover {
+        background: #e8f7f2;
+      }
+      /* Language button */
+      .btn-nav-lang {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent;
+        color: #fff;
+        border: none;
+        padding: 15px 30px;
+        font-size: 22px;
+        font-weight: 400;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background 0.15s;
+        border-radius: 6px;
+      }
+      .btn-nav-lang:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      /* Phone dropdown */
+      .phone-wrap {
+        position: relative;
+      }
+      .phone-dropdown {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: calc(100% + 6px);
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 0;
+        min-width: 280px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+        z-index: 300;
+      }
+      .phone-wrap:hover .phone-dropdown {
+        display: block;
+      }
+      .phone-entry {
+        padding: 12px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .phone-entry + .phone-entry {
+        border-top: 1px solid #f0f0f0;
+      }
+      .phone-entry .label {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 400;
+      }
+      .phone-entry .number {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--green);
+      }
+      .phone-entry .hours {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      /* Row 2: Nav links */
+      .header-nav {
+        background: #17372f;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        height: 52px;
+      }
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 0;
+      }
+      .nav-right-links {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin-left: auto;
+      }
+      .nav-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0 20px;
+        height: 52px;
+        font-size: 20px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
+        cursor: pointer;
+        white-space: nowrap;
+        transition:
+          color 0.15s,
+          background 0.15s;
+        user-select: none;
+        text-decoration: none;
+        background: none;
+        border: none;
+        font-family: inherit;
+      }
+      .nav-item:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .nav-item .fa-chevron-down {
+        font-size: 16px;
+        opacity: 1;
+      }
+
+      /* ════════════════════════════════
+         HERO
+      ════════════════════════════════ */
+      .hero {
+        position: relative;
+        min-height: 700px;
+        overflow: hidden;
+        background: #2d6f5a; /* fallback */
+      }
+      .hero-photo {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: left center;
+        display: block;
+      }
+      /* Clover leaf SVG watermark */
+      .hero-clover {
+        position: absolute;
+        left: -40px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 520px;
+        height: 520px;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0;
+      }
+      /* Right-side card */
+      .hero-card-wrap {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 48%;
+        display: flex;
+        align-items: center;
+        padding: 48px 40px 48px 60px;
+        z-index: 2;
+      }
+      .hero-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 52px 48px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+        width: 100%;
+        max-width: 540px;
+      }
+      .hero-card h1 {
+        font-size: clamp(36px, 4.2vw, 64px);
+        font-weight: 600;
+        color: var(--green);
+        line-height: 1.1;
+        letter-spacing: -0.5px;
+        margin-bottom: 18px;
+      }
+      .hero-card p {
+        font-size: 19px;
+        color: #444;
+        line-height: 1.65;
+        margin-bottom: 32px;
+        max-width: 420px;
+      }
+      /* Inline ZIP + button row */
+      .zip-row {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        border: 1.5px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .zip-row input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 16px 22px;
+        font-size: 18px;
+        font-family: inherit;
+        color: var(--text-dark);
+        background: #fff;
+      }
+      .zip-row input::placeholder {
+        color: #999;
+      }
+      .zip-row .btn-view-plans {
+        background: var(--purple);
+        color: #fff;
+        border: none;
+        padding: 16px 32px;
+        font-size: 18px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.15s;
+        border-radius: 0;
+      }
+      .zip-row .btn-view-plans:hover {
+        background: var(--purple-hover);
+      }
+
+      /* ════════════════════════════════
+         SECTIONS SHARED
+      ════════════════════════════════ */
+      .section {
+        padding: 80px 0;
+      }
+      .section-label {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: var(--green);
+        margin-bottom: 10px;
+        display: block;
+      }
+      .section-heading {
+        font-size: clamp(30px, 3.2vw, 48px);
+        font-weight: 700;
+        line-height: 1.15;
+        color: var(--text-dark);
+        margin-bottom: 14px;
+      }
+      .section-heading .green {
+        color: var(--green);
+      }
+      .section-subtext {
+        font-size: 19px;
+        color: var(--text-muted);
+        max-width: 640px;
+        line-height: 1.65;
+      }
+      .section-header {
+        margin-bottom: 52px;
+      }
+
+      /* ════════════════════════════════
+         BENEFITS
+      ════════════════════════════════ */
+      .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 40px;
+      }
+      .benefit-block {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .benefit-icon-wrap {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: var(--green-pale);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .benefit-icon-wrap img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+      }
+      .benefit-block h3 {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--green);
+        line-height: 1.2;
+      }
+      .benefit-block p {
+        font-size: 15px;
+        color: var(--text-mid);
+        line-height: 1.65;
+        flex: 1;
+      }
+      .btn-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--purple);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 0;
+        text-decoration: underline;
+        transition: color 0.15s;
+      }
+      .btn-link:hover {
+        color: var(--purple-hover);
+      }
+
+      /* ════════════════════════════════
+         DIFFERENTIATORS
+      ════════════════════════════════ */
+      .diff-bg {
+        background: var(--green-pale);
+      }
+      .diff-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border: 1px solid #c4e3d9;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .diff-cell {
+        background: #fff;
+        padding: 36px 28px;
+        border-right: 1px solid #c4e3d9;
+        transition: background 0.2s;
+      }
+      .diff-cell:last-child {
+        border-right: none;
+      }
+      .diff-cell:hover {
+        background: #f0fbf6;
+      }
+      .diff-cell-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--green-pale);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 16px;
+      }
+      .diff-cell h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+      }
+      .diff-cell p {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.65;
+      }
+
+      /* ════════════════════════════════
+         REWARDS
+      ════════════════════════════════ */
+      .rewards-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+      }
+      .rewards-card {
+        background: var(--green);
+        border-radius: 12px;
+        padding: 52px 48px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+      }
+      .rewards-card::before {
+        content: "";
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .rewards-card::after {
+        content: "";
+        position: absolute;
+        bottom: -80px;
+        left: -50px;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .rewards-amount {
+        font-size: 88px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -4px;
+        position: relative;
+        z-index: 1;
+      }
+      .rewards-amount sup {
+        font-size: 40px;
+        vertical-align: top;
+        margin-top: 18px;
+        display: inline-block;
+        letter-spacing: 0;
+      }
+      .rewards-sub {
+        font-size: 16px;
+        color: var(--green-light);
+        margin-top: 4px;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 1;
+      }
+      .rewards-items {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        position: relative;
+        z-index: 1;
+      }
+      .rewards-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 15px;
+      }
+      .r-check {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1.5px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+      .rewards-copy h2 {
+        font-size: clamp(26px, 3vw, 40px);
+        font-weight: 700;
+        margin-bottom: 14px;
+        line-height: 1.15;
+      }
+      .rewards-copy p {
+        font-size: 17px;
+        color: var(--text-muted);
+        margin-bottom: 24px;
+        line-height: 1.65;
+      }
+      .rewards-copy ul {
+        list-style: none;
+        margin-bottom: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .rewards-copy li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 15px;
+        color: var(--text-mid);
+      }
+      .rewards-copy li::before {
+        content: "";
+        width: 20px;
+        height: 20px;
+        background: var(--green-pale);
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 2px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23186555' d='M6 10.5l3 3 5-6' stroke='%23186555' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: var(--green-pale);
+      }
+      .btn-solid-green {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--green);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 13px 28px;
+        font-size: 16px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .btn-solid-green:hover {
+        background: var(--green-dark);
+      }
+
+      /* ════════════════════════════════
+         TESTIMONIALS
+      ════════════════════════════════ */
+      .testimonials-bg {
+        background: var(--green-pale);
+      }
+      .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+      .tcard {
+        background: #fff;
+        border: 1px solid #c4e3d9;
+        border-radius: 10px;
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+        transition:
+          box-shadow 0.2s,
+          transform 0.2s;
+      }
+      .tcard:hover {
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+        transform: translateY(-3px);
+      }
+      .tcard-stars {
+        color: #e9b000;
+        font-size: 15px;
+        letter-spacing: 2px;
+        margin-bottom: 14px;
+      }
+      .tcard-quote {
+        font-size: 15px;
+        color: #444;
+        line-height: 1.7;
+        flex: 1;
+        font-style: italic;
+        margin-bottom: 22px;
+      }
+      .tcard-author {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-top: 18px;
+        border-top: 1px solid #e4f0ec;
+      }
+      .tcard-initial {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--green);
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .tcard-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-dark);
+      }
+      .tcard-since {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      /* ════════════════════════════════
+         CTA BAND
+      ════════════════════════════════ */
+      .cta-band {
+        background: var(--green);
+        color: #fff;
+        padding: 88px 0;
+        text-align: center;
+      }
+      .cta-band h2 {
+        font-size: clamp(28px, 3.5vw, 46px);
+        font-weight: 700;
+        margin-bottom: 16px;
+        line-height: 1.15;
+      }
+      .cta-band p {
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.8);
+        max-width: 540px;
+        margin: 0 auto 36px;
+        line-height: 1.65;
+      }
+      .cta-buttons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .btn-cta-purple {
+        background: var(--purple);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 15px 36px;
+        font-size: 17px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .btn-cta-purple:hover {
+        background: var(--purple-hover);
+      }
+      .btn-cta-outline {
+        background: transparent;
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 6px;
+        padding: 14px 32px;
+        font-size: 17px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+      }
+      .btn-cta-outline:hover {
+        border-color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .cta-fine {
+        margin-top: 24px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+      .cta-fine a {
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: underline;
+      }
+
+      /* ════════════════════════════════
+         FOOTER
+      ════════════════════════════════ */
+      footer {
+        background: #111;
+        color: rgba(255, 255, 255, 0.65);
+        padding: 60px 0 28px;
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr 1.3fr;
+        gap: 48px;
+        padding-bottom: 44px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 28px;
+      }
+      .footer-brand-name {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 14px;
+      }
+      .footer-brand p {
+        font-size: 14px;
+        line-height: 1.65;
+        margin-bottom: 20px;
+      }
+      .footer-social {
+        display: flex;
+        gap: 10px;
+      }
+      .fsoc {
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        transition: background 0.15s;
+      }
+      .fsoc:hover {
+        background: var(--green);
+        color: #fff;
+      }
+      .footer-col h4 {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        color: #fff;
+        margin-bottom: 16px;
+      }
+      .footer-col ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
+      .footer-col ul li a {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.6);
+        transition: color 0.15s;
+      }
+      .footer-col ul li a:hover {
+        color: var(--green-light);
+      }
+      .footer-contact-info {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.6);
+        line-height: 1.7;
+      }
+      .footer-contact-info strong {
+        color: #fff;
+      }
+      .footer-contact-info a {
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .footer-contact-block + .footer-contact-block {
+        margin-top: 20px;
+      }
+      .footer-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .footer-legal {
+        font-size: 12px;
+        line-height: 1.7;
+        color: rgba(255, 255, 255, 0.4);
+        max-width: 780px;
+      }
+      .footer-legal a {
+        color: rgba(255, 255, 255, 0.55);
+        text-decoration: underline;
+      }
+      .footer-legal a:hover {
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      /* ════════════════════════════════
+         RESPONSIVE
+      ════════════════════════════════ */
+      @media (max-width: 1100px) {
+        .benefits-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 32px;
+        }
+        .diff-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .diff-cell:nth-child(2) {
+          border-right: none;
+        }
+        .diff-cell:nth-child(1),
+        .diff-cell:nth-child(2) {
+          border-bottom: 1px solid #c4e3d9;
+        }
+        .testimonials-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .footer-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .hero-card-wrap {
+          width: 52%;
+        }
+      }
+      @media (max-width: 768px) {
+        .alert-bar {
+          padding: 12px 16px;
+          flex-wrap: wrap;
+        }
+        .header-top-inner {
+          padding: 0 16px;
+        }
+        .header-nav {
+          padding: 0 16px;
+        }
+        .header-nav {
+          padding: 0 20px;
+          display: none;
+        }
+        .nav-left,
+        .nav-right-links {
+          display: none;
+        }
+        .nav-wordmark {
+          font-size: 22px;
+        }
+        .hero-clover {
+          display: none;
+        }
+        .hero-card-wrap {
+          position: static;
+          width: 100%;
+          padding: 32px 20px;
+          background: rgba(0, 0, 0, 0.35);
+        }
+        .hero-card {
+          padding: 32px 24px;
+          box-shadow: none;
+        }
+        .hero {
+          min-height: auto;
+        }
+        .rewards-layout {
+          grid-template-columns: 1fr;
+          gap: 40px;
+        }
+        .benefits-grid {
+          grid-template-columns: 1fr;
+        }
+        .diff-grid {
+          grid-template-columns: 1fr;
+        }
+        .diff-cell {
+          border-right: none !important;
+          border-bottom: 1px solid #c4e3d9;
+        }
+        .diff-cell:last-child {
+          border-bottom: none;
+        }
+        .testimonials-grid {
+          grid-template-columns: 1fr;
+        }
+        .footer-grid {
+          grid-template-columns: 1fr;
+        }
+        .container {
+          padding: 0 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ══ ALERT BAR ══ -->
+    <div class="alert-bar" id="alertBar">
+      <span class="alert-bar-text">Compare your Medicare options today.</span>
+      <button
+        class="alert-bar-cta"
+        onclick="window.location = 'tel:18008366890'"
+      >
+        Call 1-800-836-6890 (TTY 711)
+      </button>
+      <button
+        class="alert-bar-close"
+        onclick="document.getElementById('alertBar').style.display = 'none'"
+        aria-label="Close"
+      >
+        ×
+      </button>
+    </div>
+
+    <!-- ══ HEADER ══ -->
+    <header>
+      <!-- Row 1: Wordmark + Utility -->
+      <div class="header-top">
+        <div class="header-top-inner">
+          <a class="nav-wordmark" href="#">Clover Health</a>
+          <div class="header-top-right">
+            <!-- Call Us dropdown -->
+            <div class="phone-wrap">
+              <button class="btn-nav-util btn-nav-call">
+                <i class="fas fa-phone" style="font-size: 13px"></i>
+                Call Us
+                <i class="fas fa-chevron-down"></i>
+              </button>
+              <div class="phone-dropdown">
+                <div class="phone-entry">
+                  <span class="label">Current Members</span>
+                  <span class="number">1-888-778-1478</span>
+                  <span class="hours">TTY 711 · 8am–8pm, 7 days/week</span>
+                </div>
+                <div class="phone-entry">
+                  <span class="label">To Join Clover</span>
+                  <span class="number">1-800-836-6890</span>
+                  <span class="hours">TTY 711 · Mon–Fri 8am–8pm ET</span>
+                </div>
+              </div>
+            </div>
+            <!-- My Clover -->
+            <button class="btn-nav-util btn-nav-myclover">
+              <i class="fas fa-user-circle" style="font-size: 15px"></i>
+              My Clover
+            </button>
+            <!-- Language -->
+            <button class="btn-nav-lang">
+              <i class="fas fa-globe" style="font-size: 18px; opacity: 0.8"></i>
+              English
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Nav links -->
+      <div class="header-nav">
+        <div class="nav-left">
+          <a class="nav-item" href="#"
+            >Plans &amp; Coverage <i class="fas fa-chevron-down"></i
+          ></a>
+          <a class="nav-item" href="#"
+            >Medicare Resources <i class="fas fa-chevron-down"></i
+          ></a>
+          <a class="nav-item" href="#"
+            >For Members <i class="fas fa-chevron-down"></i
+          ></a>
+        </div>
+        <div class="nav-right-links">
+          <a class="nav-item" href="#"
+            >For Providers <i class="fas fa-chevron-down"></i
+          ></a>
+          <a class="nav-item" href="#"
+            >For Agents <i class="fas fa-chevron-down"></i
+          ></a>
+          <a class="nav-item" href="#"
+            >About Us <i class="fas fa-chevron-down"></i
+          ></a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══ HERO ══ -->
+    <section class="hero">
+      <!-- Full-bleed photo -->
+      <img
+        class="hero-photo"
+        src="https://cdn.cloverhealth.com/filer_cloudrun_public/filer_public/03/ab/03aba153-50b2-41d0-878a-bd9ddeb66e9e/25ex127_hero_image_1440x700_desktop_1x.jpg"
+        alt="Smiling Clover Health member"
+      />
+
+      <!-- Clover leaf watermark (4-petal SVG) -->
+      <svg
+        class="hero-clover"
+        viewBox="0 0 300 340"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <circle cx="90" cy="90" r="85" fill="white" />
+        <circle cx="210" cy="90" r="85" fill="white" />
+        <circle cx="90" cy="210" r="85" fill="white" />
+        <circle cx="210" cy="210" r="85" fill="white" />
+        <rect x="140" y="285" width="20" height="55" rx="10" fill="white" />
+      </svg>
+
+      <!-- Right-side card -->
+      <div class="hero-card-wrap">
+        <div class="hero-card">
+          <h1>Get the Medicare Coverage You've Been Missing</h1>
+          <p>
+            Find plans with $0 to low premiums and copays, plus extras like
+            dental, vision, OTC, and a rewards program.
+          </p>
+          <div class="zip-row">
+            <input
+              type="text"
+              maxlength="5"
+              placeholder="Enter your ZIP code"
+            />
+            <button class="btn-view-plans">View Plans</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ BENEFITS ══ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">What's Included</span>
+          <h2 class="section-heading">
+            Get the Benefits <span class="green">You Deserve</span>
+          </h2>
+          <p class="section-subtext">
+            Clover Advantage plans include everything Original Medicare covers —
+            plus the extras that improve your daily life.
+          </p>
+        </div>
+        <div class="benefits-grid">
+          <div class="benefit-block">
+            <div class="benefit-icon-wrap">
+              <img
+                src="https://cdn.cloverhealth.com/filer_cloudrun_public/filer_public/93/59/93599e82-ba8c-47b1-bc42-7c9dc47e13d5/hpg_icon1_card.png"
+                alt="Benefits"
+              />
+            </div>
+            <h3>Dental, Vision, OTC, &amp; More</h3>
+            <p>
+              Routine dental, eyewear allowances, hearing aids, and quarterly
+              over-the-counter credits.
+            </p>
+            <button class="btn-link">
+              Start Saving
+              <i class="fas fa-arrow-right" style="font-size: 12px"></i>
+            </button>
+          </div>
+          <div class="benefit-block">
+            <div class="benefit-icon-wrap">
+              <img
+                src="https://cdn.cloverhealth.com/filer_cloudrun_public/filer_public/ff/98/ff987120-ae06-40f2-b23d-7fad9dfaf422/hpg_icon2_piggybank.png"
+                alt="Prescription"
+              />
+            </div>
+            <h3>Prescription Drugs</h3>
+            <p>
+              Part D coverage built in with a broad formulary and low copays at
+              preferred pharmacies.
+            </p>
+            <button class="btn-link">
+              Get Started
+              <i class="fas fa-arrow-right" style="font-size: 12px"></i>
+            </button>
+          </div>
+          <div class="benefit-block">
+            <div class="benefit-icon-wrap">
+              <img
+                src="https://cdn.cloverhealth.com/filer_cloudrun_public/filer_public/25/47/25470d58-996b-4b12-8242-48dce1c53a45/hpg_icon3_mappin.png"
+                alt="Care"
+              />
+            </div>
+            <h3>Getting the Care You Need</h3>
+            <p>
+              Broad network of PCPs, specialists, and hospitals with $0 copays
+              on preventive visits.
+            </p>
+            <button class="btn-link">
+              Find a Doctor
+              <i class="fas fa-arrow-right" style="font-size: 12px"></i>
+            </button>
+          </div>
+          <div class="benefit-block">
+            <div class="benefit-icon-wrap" style="font-size: 34px">🏋️</div>
+            <h3>Fitness &amp; Wellness</h3>
+            <p>
+              SilverSneakers gym membership, telehealth visits, and the
+              LiveHealthy Rewards program.
+            </p>
+            <button class="btn-link">
+              Learn More
+              <i class="fas fa-arrow-right" style="font-size: 12px"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ DIFFERENTIATORS ══ -->
+    <section class="section diff-bg">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Why Clover</span>
+          <h2 class="section-heading">Medicare Done Differently</h2>
+          <p class="section-subtext">
+            Built from the ground up to give members better coverage and lower
+            costs.
+          </p>
+        </div>
+        <div class="diff-grid">
+          <div class="diff-cell">
+            <div class="diff-cell-icon">💰</div>
+            <h3>Affordability</h3>
+            <p>
+              Plans starting at $0/month with low copays and out-of-pocket
+              limits.
+            </p>
+          </div>
+          <div class="diff-cell">
+            <div class="diff-cell-icon">🩺</div>
+            <h3>Flexibility</h3>
+            <p>
+              Keep your own doctors. Broad networks with no referral
+              requirements.
+            </p>
+          </div>
+          <div class="diff-cell">
+            <div class="diff-cell-icon">📋</div>
+            <h3>Predictability</h3>
+            <p>Fixed copays so you know your costs before every appointment.</p>
+          </div>
+          <div class="diff-cell">
+            <div class="diff-cell-icon">⭐</div>
+            <h3>Real Value</h3>
+            <p>
+              Hundreds in yearly extra benefits — dental, OTC, fitness, and
+              rewards.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ REWARDS ══ -->
+    <section class="section">
+      <div class="container">
+        <div class="rewards-layout">
+          <div class="rewards-card">
+            <div class="rewards-amount"><sup>$</sup>400</div>
+            <p class="rewards-sub">Earn up to $400 Reward Dollars per year</p>
+            <div class="rewards-items">
+              <div class="rewards-item">
+                <div class="r-check">✓</div>
+                Earn for healthy activities
+              </div>
+              <div class="rewards-item">
+                <div class="r-check">✓</div>
+                Spend on OTC &amp; gym memberships
+              </div>
+              <div class="rewards-item">
+                <div class="r-check">✓</div>
+                Track in the My Clover app
+              </div>
+              <div class="rewards-item">
+                <div class="r-check">✓</div>
+                Included at no extra cost
+              </div>
+            </div>
+          </div>
+          <div class="rewards-copy">
+            <span class="section-label">LiveHealthy Rewards</span>
+            <h2>Earn Money for Staying Healthy</h2>
+            <p>
+              The Clover LiveHealthy Rewards Program puts Reward Dollars back in
+              your pocket when you take steps to manage your health.
+            </p>
+            <ul>
+              <li>Annual wellness visits and preventive screenings</li>
+              <li>Exercise and fitness activity tracking</li>
+              <li>Chronic condition management check-ins</li>
+              <li>Telehealth and virtual care visits</li>
+              <li>Health education program completion</li>
+            </ul>
+            <button class="btn-solid-green">View Program Details</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ TESTIMONIALS ══ -->
+    <section class="section testimonials-bg">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Member Stories</span>
+          <h2 class="section-heading">Hear From Our Members</h2>
+          <p class="section-subtext">
+            Real Clover Health members share what their plans mean to them.
+          </p>
+        </div>
+        <div class="testimonials-grid">
+          <div class="tcard">
+            <div class="tcard-stars">★★★★★</div>
+            <p class="tcard-quote">
+              "Clover has been wonderful. My prescriptions are affordable and I
+              finally have dental coverage. The care team actually calls to
+              check in on me — it feels personal."
+            </p>
+            <div class="tcard-author">
+              <div class="tcard-initial">C</div>
+              <div>
+                <div class="tcard-name">Carol</div>
+                <div class="tcard-since">Member since 2024</div>
+              </div>
+            </div>
+          </div>
+          <div class="tcard">
+            <div class="tcard-stars">★★★★★</div>
+            <p class="tcard-quote">
+              "I've been a Clover member for years and the $0 premium is
+              incredible. I kept all my doctors and I use the rewards program
+              every single quarter."
+            </p>
+            <div class="tcard-author">
+              <div class="tcard-initial">D</div>
+              <div>
+                <div class="tcard-name">Dipak</div>
+                <div class="tcard-since">Member since 2017</div>
+              </div>
+            </div>
+          </div>
+          <div class="tcard">
+            <div class="tcard-stars">★★★★★</div>
+            <p class="tcard-quote">
+              "After ten years I can't imagine switching. The OTC benefit and
+              dental coverage alone are worth it. Great plan, great people."
+            </p>
+            <div class="tcard-author">
+              <div class="tcard-initial">A</div>
+              <div>
+                <div class="tcard-name">Al</div>
+                <div class="tcard-since">Member since 2014</div>
+              </div>
+            </div>
+          </div>
+          <div class="tcard">
+            <div class="tcard-stars">★★★★★</div>
+            <p class="tcard-quote">
+              "Switching to Clover was easy and I saved so much money. My
+              specialist visits are affordable and the telehealth option is so
+              convenient."
+            </p>
+            <div class="tcard-author">
+              <div class="tcard-initial">N</div>
+              <div>
+                <div class="tcard-name">Natalia</div>
+                <div class="tcard-since">Member since 2018</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ CTA BAND ══ -->
+    <div class="cta-band">
+      <div class="container">
+        <h2>Ready to Find Your Plan?</h2>
+        <p>
+          Compare Medicare Advantage plans available in your area and start
+          saving today.
+        </p>
+        <div class="cta-buttons">
+          <button class="btn-cta-purple">View Plans</button>
+          <button class="btn-cta-outline">Request a Callback</button>
+        </div>
+        <p class="cta-fine">
+          Call <a href="tel:18008366890">1-800-836-6890</a> (TTY 711) · Mon–Fri
+          8am–8pm ET
+        </p>
+      </div>
+    </div>
+
+    <!-- ══ FOOTER ══ -->
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <div class="footer-brand-name">Clover Health</div>
+            <p>
+              Medicare Advantage plans built to give you better coverage and
+              more of the benefits that matter most.
+            </p>
+            <div class="footer-social">
+              <a class="fsoc" href="#" aria-label="Facebook"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a class="fsoc" href="#" aria-label="Instagram"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a class="fsoc" href="#" aria-label="Twitter"
+                ><i class="fab fa-twitter"></i
+              ></a>
+              <a class="fsoc" href="#" aria-label="YouTube"
+                ><i class="fab fa-youtube"></i
+              ></a>
+              <a class="fsoc" href="#" aria-label="LinkedIn"
+                ><i class="fab fa-linkedin-in"></i
+              ></a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h4>Member Resources</h4>
+            <ul>
+              <li><a href="#">Find a Plan</a></li>
+              <li><a href="#">Find a Provider</a></li>
+              <li><a href="#">Drug Formulary</a></li>
+              <li><a href="#">OTC Benefits</a></li>
+              <li><a href="#">File a Claim</a></li>
+              <li><a href="#">My Clover Portal</a></li>
+              <li><a href="#">Notice of Privacy Practices</a></li>
+              <li><a href="#">Share Health Information</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Locations</h4>
+            <ul>
+              <li><a href="#">Georgia</a></li>
+              <li><a href="#">New Jersey</a></li>
+              <li><a href="#">Pennsylvania</a></li>
+              <li><a href="#">South Carolina</a></li>
+              <li><a href="#">Texas</a></li>
+            </ul>
+            <h4 style="margin-top: 24px">For Providers</h4>
+            <ul>
+              <li><a href="#">Provider Manual</a></li>
+              <li><a href="#">Prior Authorization</a></li>
+              <li><a href="#">Agent FAQ</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Member Services</h4>
+            <div class="footer-contact-info">
+              <div class="footer-contact-block">
+                <strong>1-888-778-1478</strong> (TTY 711)<br />
+                8 am – 8 pm local time, 7 days/week
+              </div>
+              <div class="footer-contact-block">
+                <strong>To Join Clover</strong><br />
+                <a href="tel:18008366890">1-800-836-6890</a> (TTY 711)<br />
+                Mon–Fri 8am–8pm ET
+              </div>
+              <div class="footer-contact-block">
+                P.O. Box 21164<br />
+                Eagan, MN 55121
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p class="footer-legal">
+            Clover Health is an HMO/PPO with a Medicare contract. Enrollment in
+            Clover Health depends on contract renewal. Benefits, premiums,
+            and/or copayments/coinsurance may change on January 1 of each year.
+            Other physicians/providers are available in our network.
+            MULTIPLAN_H5549_2025_M<br /><br />
+            Last Updated: March 2025 &nbsp;·&nbsp; © 2025 Clover Health
+            Partners, LLC. All rights reserved. &nbsp;·&nbsp;
+            <a href="#">Privacy Policy</a> &nbsp;·&nbsp;
+            <a href="#">Digital Accessibility Policy</a> &nbsp;·&nbsp;
+            <a href="#">Terms of Use</a> &nbsp;·&nbsp;
+            <a href="#">Non-Discrimination Notice</a>
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ════════════════════════════════════════
+         CHATBOT WIDGET — Ask Clovis
+         Served from your Vercel deployment
+    ════════════════════════════════════════ -->
+    <iframe
+      src="https://ask-clovis.vercel.app/widget"
+      style="
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 440px;
+        height: 680px;
+        border: none;
+        z-index: 9999;
+        background: transparent;
+      "
+      title="Ask Clovis"
+    ></iframe>
+  </body>
+</html>
