@@ -38,6 +38,12 @@ export const UI_STRINGS: Record<
     callLabel: (phone: string) => string;
     commonTopics: string;
     signedInAs: string;
+    // Auth flow
+    verifyingIdentity: string;
+    identityVerificationRequired: string;
+    authWelcome: string;
+    authVerified: (firstName: string) => string;
+    authFailed: string;
     // Setup page
     setup: {
       heading: string;
@@ -136,6 +142,14 @@ export const UI_STRINGS: Record<
     callLabel: (phone) => `Call ${phone}`,
     commonTopics: "Common Topics",
     signedInAs: "Signed In As",
+    verifyingIdentity: "Verifying identity…",
+    identityVerificationRequired: "Identity verification required",
+    authWelcome:
+      "Hello! I'm Clovis, your Clover Health assistant. 👋\n\nBefore I can access your account details, I need to verify your identity — it'll only take a moment.\n\nCould you please start by telling me your **full name**?",
+    authVerified: (firstName: string) =>
+      `Identity verified — welcome, ${firstName}! How can I help you today? CHIPS: [My benefits] | [Check a claim] | [Find a doctor] | [My OTC balance]`,
+    authFailed:
+      "I'm sorry, I wasn't able to verify your identity with the information provided. Please double-check your details and try again, or call us at 1-800-801-2060 to speak with a live agent. CHIPS: [Try again]",
     setup: {
       heading: "Set up your profile",
       subtitle: "Enter your ZIP code to find your Clover Health plan.",
@@ -240,6 +254,14 @@ export const UI_STRINGS: Record<
     callLabel: (phone) => `Llamar al ${phone}`,
     commonTopics: "Temas Comunes",
     signedInAs: "Conectado Como",
+    verifyingIdentity: "Verificando identidad…",
+    identityVerificationRequired: "Verificación de identidad requerida",
+    authWelcome:
+      "¡Hola! Soy Clovis, su asistente de Clover Health. 👋\n\nAntes de acceder a los detalles de su cuenta, necesito verificar su identidad — solo tomará un momento.\n\n¿Podría comenzar diciéndome su **nombre completo**?",
+    authVerified: (firstName: string) =>
+      `Identidad verificada — ¡bienvenido/a, ${firstName}! ¿En qué puedo ayudarle hoy? CHIPS: [Mis beneficios] | [Ver una reclamación] | [Buscar médico] | [Mi saldo OTC]`,
+    authFailed:
+      "Lo siento, no pude verificar su identidad con la información proporcionada. Por favor, revise sus datos e inténtelo de nuevo, o llame al 1-800-801-2060 para hablar con un agente en vivo. CHIPS: [Intentar de nuevo]",
     setup: {
       heading: "Configure su perfil",
       subtitle:
@@ -300,6 +322,14 @@ export const UI_STRINGS: Record<
     callLabel: (phone) => `拨打 ${phone}`,
     commonTopics: "常见话题",
     signedInAs: "已登录为",
+    verifyingIdentity: "正在验证身份…",
+    identityVerificationRequired: "需要身份验证",
+    authWelcome:
+      "您好！我是Clovis，您的Clover Health助手。👋\n\n在访问您的账户详情之前，我需要验证您的身份 — 只需片刻。\n\n请问您能先告诉我您的**全名**吗？",
+    authVerified: (firstName: string) =>
+      `身份已验证 — 欢迎，${firstName}！今天有什么可以帮您的？ CHIPS: [我的福利] | [查看理赔] | [查找医生] | [我的OTC余额]`,
+    authFailed:
+      "很抱歉，我无法使用您提供的信息验证您的身份。请仔细检查您的信息并重试，或拨打 1-800-801-2060 与客服代表通话。 CHIPS: [重试]",
     setup: {
       heading: "设置您的个人资料",
       subtitle: "输入您的邮政编码以查找您的Clover Health计划。",
@@ -506,8 +536,13 @@ const AUTH_VOICE_ADDENDUM = `
 
 **Name spelling confirmation (required for this voice session):** As soon as you receive the member's name, immediately spell it back letter by letter and ask them to confirm before collecting anything else. For example: "Got it — so that's spelled J-O-H-N S-M-I-T-H, is that right?" Wait for their confirmation. If they correct you, spell it back again and confirm once more before proceeding.`;
 
-export function buildAuthSystemPrompt(voiceMode: boolean): string {
-  return voiceMode ? AUTH_BASE + AUTH_VOICE_ADDENDUM : AUTH_BASE;
+export function buildAuthSystemPrompt(voiceMode: boolean, language?: string): string {
+  const languageLine =
+    language && LANGUAGE_NAMES[language]
+      ? `\n\nIMPORTANT: You must respond ONLY in ${LANGUAGE_NAMES[language]}.`
+      : "";
+  const base = voiceMode ? AUTH_BASE + AUTH_VOICE_ADDENDUM : AUTH_BASE;
+  return base + languageLine;
 }
 
 /** @deprecated use buildAuthSystemPrompt */

@@ -11,12 +11,9 @@ import type { Language } from "@/lib/constants";
 import type { AuthStage, AuthFields, Member, Message } from "@/types";
 import type { MockMember } from "@/lib/mockMembers";
 
-const AUTH_WELCOME: Message = {
-  id: "auth-welcome",
-  role: "assistant",
-  content:
-    "Hello! I'm Clovis, your Clover Health assistant. 👋\n\nBefore I can access your account details, I need to verify your identity — it'll only take a moment.\n\nCould you please start by telling me your **full name**?",
-};
+function makeAuthWelcome(content: string): Message {
+  return { id: "auth-welcome", role: "assistant", content };
+}
 
 function makeWelcome(firstName: string): Message {
   return {
@@ -69,7 +66,7 @@ export function Chat({
   );
   const [verifiedMember, setVerifiedMember] = useState<MockMember | null>(null);
   const [messages, setMessages] = useState<Message[]>(() =>
-    isLegacyMode ? [makeWelcome(legacyFirstName)] : [AUTH_WELCOME],
+    isLegacyMode ? [makeWelcome(legacyFirstName)] : [makeAuthWelcome(strings.authWelcome)],
   );
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -103,7 +100,7 @@ export function Chat({
 
   function handleLanguageChange(lang: Language) {
     onLanguageChange(lang);
-    if (authStage !== "authenticated") setMessages([AUTH_WELCOME]);
+    if (authStage !== "authenticated") setMessages([makeAuthWelcome(UI_STRINGS[lang].authWelcome)]);
     setInput("");
   }
 
@@ -131,7 +128,7 @@ export function Chat({
       if (authStage === "failed") {
         setAuthStage("collecting");
         onAuthChange?.("collecting", null);
-        setMessages([AUTH_WELCOME]);
+        setMessages([makeAuthWelcome(strings.authWelcome)]);
         setInput("");
         return null;
       }
@@ -171,7 +168,7 @@ export function Chat({
           const res = await fetch("/api/auth-chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ messages: history, voiceMode: showVoiceModeRef.current }),
+            body: JSON.stringify({ messages: history, voiceMode: showVoiceModeRef.current, language }),
           });
           if (!res.ok) throw new Error("HTTP " + res.status);
           const { reply, error } = await res.json();
@@ -192,13 +189,13 @@ export function Chat({
               setVerifiedMember(verified);
               onAuthChange?.("authenticated", verified);
               const firstName = verified.name.split(" ")[0];
-              const welcomeText = `Identity verified — welcome, ${firstName}! How can I help you today? CHIPS: [My benefits] | [Check a claim] | [Find a doctor] | [My OTC balance]`;
+              const welcomeText = strings.authVerified(firstName);
               setMessages([buildBotMessage(welcomeText)]);
               return welcomeText;
             } else {
               setAuthStage("failed");
               onAuthChange?.("failed", null);
-              const failText = `I'm sorry, I wasn't able to verify your identity with the information provided. Please double-check your details and try again, or call us at 1-800-801-2060 to speak with a live agent who can help you. CHIPS: [Try again]`;
+              const failText = strings.authFailed;
               setMessages((prev) => [...prev, buildBotMessage(failText)]);
               return failText;
             }

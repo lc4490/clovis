@@ -109,7 +109,7 @@ export function Sidebar({
             <div className="flex items-center gap-2 mb-3">
               <span className="text-white/40 text-lg">🔒</span>
               <p className="text-white/40 text-[11px] uppercase tracking-widest font-medium">
-                {authStage === "verifying" ? "Verifying identity…" : "Identity verification required"}
+                {authStage === "verifying" ? strings.verifyingIdentity : strings.identityVerificationRequired}
               </p>
             </div>
             <div className="space-y-2">

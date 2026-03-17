@@ -8,12 +8,12 @@ const client = new Anthropic({
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, voiceMode = false } = await req.json();
+    const { messages, voiceMode = false, language } = await req.json();
 
     const response = await client.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 300,
-      system: buildAuthSystemPrompt(voiceMode),
+      system: buildAuthSystemPrompt(voiceMode, language),
       messages,
     });
 
