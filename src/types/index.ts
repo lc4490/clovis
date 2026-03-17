@@ -1,5 +1,14 @@
 export type Role = "user" | "assistant";
 
+export type AuthStage = "collecting" | "verifying" | "authenticated" | "failed";
+
+export interface AuthFields {
+  name?: string;
+  dob?: string;
+  memberIdOrSsn?: string;
+  zip?: string;
+}
+
 export interface Provider {
   provider_id: string;
   full_name: string;

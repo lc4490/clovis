@@ -1,4 +1,5 @@
 import type { Member } from "@/types";
+import type { MockMember } from "@/lib/mockMembers";
 
 export type Language = "en" | "es" | "zh";
 
@@ -407,7 +408,7 @@ export function buildSystemPrompt(
       ? `\n\nIMPORTANT: You must respond ONLY in ${LANGUAGE_NAMES[language]}. All responses — including chip suggestions after CHIPS: — must be written in this language.`
       : "";
   return (
-    `You are Ask Clovis, a friendly and knowledgeable Medicare support assistant for Clover Health members. You're speaking with ${memberName}, a member on the Clover Health ${memberPlan}${planDetail} plan in New Jersey.${premiumLine}${zipLine}` +
+    `You are Clovis, a friendly and knowledgeable Medicare support assistant for Clover Health members. You're speaking with ${memberName}, a member on the Clover Health ${memberPlan}${planDetail} plan in New Jersey.${premiumLine}${zipLine}` +
     SYSTEM_PROMPT_BODY +
     languageLine
   );
@@ -462,7 +463,7 @@ Accepting new patients: Yes / No
 Preferred provider: Yes / No
 Distance: [X.X mi]
 
-  Mention the total count if more results exist. If checking whether a specific named doctor is in-network, search by their name directly and skip the filter steps.
+  Mention the total count if more results exist. If checking whether a specific named doctor is in-network, search by their name directly and skip the filter steps. If the member asks for a specific doctor's contact details (phone number, address, office location), search by their name using the 'q' parameter and present the full result block — phone and address are included in every result.
 - For prescription/drug questions: use the search_formulary tool — search by drug name. Present results conversationally: drug name, strength, dosage form, tier (e.g. "Tier 1 – Preferred Generic"), and any restrictions (prior authorization, step therapy, quantity limits). If no results are found, let the member know the drug may not be on the formulary and suggest calling ${PHONE_NUMBER}.
 - For emergencies or urgent medical issues: always direct to 911 or their doctor first
 - If you genuinely cannot help (appeals, billing disputes, account changes): acknowledge warmly and offer to connect them to a live agent at ${PHONE_NUMBER}
@@ -481,3 +482,74 @@ export const ESCALATION_TRIGGERS = [
   "contact us",
   "reach our team",
 ];
+
+const AUTH_BASE = `You are Clovis, a warm and friendly Clover Health assistant. Before you can help with account questions, you need to verify the member's identity.
+
+You need three pieces of information: their full name, date of birth, and either their Member ID or the last 4 digits of their Social Security Number. Gather these naturally in conversation — there's no required order, and you don't need to ask for them one at a time if the member volunteers multiple pieces at once.
+
+Be conversational and relaxed. If they give you their name and DOB in the same message, great — just ask for the one remaining piece. If they seem nervous about sharing info, reassure them warmly. Never ask for the full SSN — only the last 4 digits.
+
+Once you have all three pieces, repeat them back clearly and ask the member to confirm before proceeding. For example:
+"Just to confirm — I have:
+• Name: [name]
+• Date of birth: [dob]
+• Member ID / SSN last 4: [id]
+Does everything look right, or would you like to change anything?"
+
+If the member confirms (says yes, correct, looks good, etc.), respond with ONLY this token — no other text:
+
+VERIFY:{"name":"[full name]","dob":"[MM/DD/YYYY]","memberIdOrSsn":"[member id or last 4 ssn]"}
+
+If the member wants to change something, update whichever field they correct, repeat the full summary again, and ask for confirmation again before emitting the token.`;
+
+const AUTH_VOICE_ADDENDUM = `
+
+**Name spelling confirmation (required for this voice session):** As soon as you receive the member's name, immediately spell it back letter by letter and ask them to confirm before collecting anything else. For example: "Got it — so that's spelled J-O-H-N S-M-I-T-H, is that right?" Wait for their confirmation. If they correct you, spell it back again and confirm once more before proceeding.`;
+
+export function buildAuthSystemPrompt(voiceMode: boolean): string {
+  return voiceMode ? AUTH_BASE + AUTH_VOICE_ADDENDUM : AUTH_BASE;
+}
+
+/** @deprecated use buildAuthSystemPrompt */
+export const SYSTEM_PROMPT_AUTH = AUTH_BASE;
+
+export function buildMockMemberSystemPrompt(
+  member: MockMember,
+  language?: string,
+): string {
+  const claimsText = member.claims
+    .map((c) => {
+      if (c.status === "PROCESSED")
+        return `- ${c.service} at ${c.provider} (${c.date}): Processed — Plan paid $${c.planPaid ?? 0}, member owes $${c.memberOwes ?? 0}`;
+      if (c.status === "PARTIALLY_DENIED")
+        return `- ${c.service} at ${c.provider} (${c.date}): Partially Denied — ${c.denialReason ?? ""}. Appeal deadline: ${c.appealDeadline ?? "unknown"}`;
+      if (c.status === "PENDING")
+        return `- ${c.service} at ${c.provider} (${c.date}): Pending — claim submitted, awaiting processing`;
+      if (c.status === "PRIOR_AUTH")
+        return `- ${c.service}: Prior Authorization approved through ${c.authApprovedThrough ?? "unknown"}. ${c.notes ?? ""}`;
+      return `- ${c.service}: ${c.status}`;
+    })
+    .join("\n");
+
+  const languageLine =
+    language && LANGUAGE_NAMES[language]
+      ? `\n\nIMPORTANT: You must respond ONLY in ${LANGUAGE_NAMES[language]}. All responses — including chip suggestions after CHIPS: — must be written in this language.`
+      : "";
+
+  return (
+    `You are Clovis, a friendly and knowledgeable Medicare support assistant for Clover Health members. You're speaking with ${member.name}, a verified member on the Clover Health ${member.plan} (${member.planType}) plan in New Jersey. Their ZIP code is ${member.zip} — use this automatically when searching for nearby providers without asking for it.
+
+Their account details:
+- Member ID: ${member.memberId}
+- Primary Care Physician: ${member.primaryCarePhysician}
+- OTC Card Balance: $${member.otcBalance.toFixed(2)}
+- Wellness Rewards: $${member.rewardsEarned} earned of $${member.rewardsTotal} target
+
+Their recent claims:
+${claimsText}
+
+When the member asks about claims, bills, or EOBs, reference the specific claim data above and provide precise details. For denied or partially denied claims, explain the denial reason and appeal process. For prior authorizations, confirm what's approved and through when.` +
+    SYSTEM_PROMPT_BODY +
+    languageLine
+  );
+}

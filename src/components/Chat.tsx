@@ -3,167 +3,258 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageBubble, TypingIndicator } from "./MessageBubble";
 import { ChatInput } from "./ChatInput";
-import { LANGUAGES, UI_STRINGS } from "@/lib/constants";
+import { VoiceMode } from "./VoiceMode";
+import { LANGUAGES, UI_STRINGS, buildMockMemberSystemPrompt } from "@/lib/constants";
 import { buildBotMessage } from "@/lib/utils";
+import { verifyMember } from "@/lib/mockMembers";
 import type { Language } from "@/lib/constants";
-import type { Member, Message } from "@/types";
+import type { AuthStage, AuthFields, Member, Message } from "@/types";
+import type { MockMember } from "@/lib/mockMembers";
 
-function makeWelcome(firstName: string, lang: Language): Message {
-  const s = UI_STRINGS[lang];
+const AUTH_WELCOME: Message = {
+  id: "auth-welcome",
+  role: "assistant",
+  content:
+    "Hello! I'm Clovis, your Clover Health assistant. 👋\n\nBefore I can access your account details, I need to verify your identity — it'll only take a moment.\n\nCould you please start by telling me your **full name**?",
+};
+
+function makeWelcome(firstName: string): Message {
   return {
     id: "welcome",
     role: "assistant",
-    content: s.welcome(firstName),
-    chips: s.welcomeChips.map((c) => c.label),
+    content: `Hello, ${firstName}! 👋 I'm your Clover Health assistant — here to help you understand your benefits, check on claims, find doctors, and much more.\n\nWhat can I help you with today?`,
+    chips: ["My benefits", "Find a provider", "Check a claim", "Prior authorization"],
   };
+}
+
+function parseVerifyToken(raw: string): AuthFields | null {
+  const match = raw.match(/^VERIFY:(\{[\s\S]*\})$/);
+  if (!match) return null;
+  try {
+    return JSON.parse(match[1]) as AuthFields;
+  } catch {
+    return null;
+  }
 }
 
 interface ChatProps {
   onQuickAction: (setter: (prompt: string) => void) => void;
-  member: Member;
   language: Language;
   onLanguageChange: (lang: Language) => void;
   onSidebarToggle?: () => void;
   textIdx: number;
   onTextIdxChange: (i: number) => void;
   textSizes: string[];
+  onAuthChange?: (stage: AuthStage, member: MockMember | null) => void;
+  member?: Member;
 }
 
 export function Chat({
   onQuickAction,
-  member,
   language,
   onLanguageChange,
   onSidebarToggle,
   textIdx,
   onTextIdxChange,
   textSizes,
+  onAuthChange,
+  member: legacyMember,
 }: ChatProps) {
-  const firstName = member.name.split(" ")[0];
   const strings = UI_STRINGS[language];
+  const isLegacyMode = legacyMember !== undefined;
+  const legacyFirstName = legacyMember?.name.split(" ")[0] ?? "";
 
-  const [messages, setMessages] = useState<Message[]>(() => [
-    makeWelcome(firstName, language),
-  ]);
+  const [authStage, setAuthStage] = useState<AuthStage>(
+    isLegacyMode ? "authenticated" : "collecting",
+  );
+  const [verifiedMember, setVerifiedMember] = useState<MockMember | null>(null);
+  const [messages, setMessages] = useState<Message[]>(() =>
+    isLegacyMode ? [makeWelcome(legacyFirstName)] : [AUTH_WELCOME],
+  );
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState("general");
   const [showMemberCard, setShowMemberCard] = useState(false);
+  const [showVoiceMode, setShowVoiceMode] = useState(false);
+
+  const displayName = isLegacyMode ? legacyMember!.name : verifiedMember?.name ?? null;
+  const displayInitials = isLegacyMode
+    ? legacyMember!.initials
+    : verifiedMember?.name.split(" ").map((w) => w[0]).join("").toUpperCase() ?? null;
+  const displayMemberId = isLegacyMode ? legacyMember!.memberId : verifiedMember?.memberId ?? null;
+  const displayPlan = isLegacyMode ? legacyMember!.plan : verifiedMember?.plan ?? null;
+  const displayStars = isLegacyMode ? legacyMember!.stars : verifiedMember?.stars ?? null;
+
+  const showVoiceModeRef = useRef(showVoiceMode);
+  useEffect(() => { showVoiceModeRef.current = showVoiceMode; }, [showVoiceMode]);
 
   function detectLoadingStatus(text: string): string {
     const t = text.toLowerCase();
-    if (
-      /doctor|provider|specialist|in.?network|physician|dentist|facility|find a/.test(
-        t,
-      )
-    )
+    if (/doctor|provider|specialist|in.?network|physician|dentist|facility|find a/.test(t))
       return "provider";
-    if (
-      /drug|medication|prescription|formulary|pill|refill|covered|coverage/.test(
-        t,
-      )
-    )
+    if (/drug|medication|prescription|formulary|pill|refill|covered|coverage/.test(t))
       return "formulary";
     return "general";
   }
 
-  // Map welcome chip labels → prompts for current language
   const chipPromptMap = Object.fromEntries(
     strings.welcomeChips.map((c) => [c.label, c.prompt]),
   );
 
   function handleLanguageChange(lang: Language) {
     onLanguageChange(lang);
-    setMessages([makeWelcome(firstName, lang)]);
+    if (authStage !== "authenticated") setMessages([AUTH_WELCOME]);
     setInput("");
   }
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const handleSendTextRef = useRef<(text: string) => Promise<string | null>>(() =>
+    Promise.resolve(null),
+  );
 
-  // Scroll to bottom whenever messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // Allow Sidebar to trigger quick-action sends
   useEffect(() => {
     onQuickAction((prompt) => {
       setInput(prompt);
-      // Small delay so state flushes before send
-      setTimeout(() => handleSendText(prompt), 50);
+      setTimeout(() => handleSendTextRef.current(prompt), 50);
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSendText = useCallback(
-    async (text: string) => {
+    async (text: string): Promise<string | null> => {
       const trimmed = text.trim();
-      if (!trimmed || loading) return;
+      if (!trimmed || loading) return null;
 
-      const userMsg: Message = {
-        id: crypto.randomUUID(),
-        role: "user",
-        content: trimmed,
-      };
+      if (authStage === "failed") {
+        setAuthStage("collecting");
+        onAuthChange?.("collecting", null);
+        setMessages([AUTH_WELCOME]);
+        setInput("");
+        return null;
+      }
 
+      const userMsg: Message = { id: crypto.randomUUID(), role: "user", content: trimmed };
       setMessages((prev) => [...prev, userMsg]);
       setInput("");
       setLoading(true);
       setLoadingStatus(detectLoadingStatus(trimmed));
 
-      // Build conversation history for API (exclude welcome, only real turns)
       const history = [...messages, userMsg]
-        .filter((m) => m.id !== "welcome")
+        .filter((m) => m.id !== "auth-welcome" && m.id !== "welcome")
         .map((m) => ({ role: m.role, content: m.content }));
 
       try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            messages: history,
-            memberName: member.name,
-            memberPlan: member.plan,
-            memberPlanId: member.planId,
-            memberPlanType: member.planType,
-            memberPremium: member.premium,
-            memberZip: member.zipCode,
-            language,
-          }),
-        });
+        if (isLegacyMode && legacyMember) {
+          const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              messages: history,
+              memberName: legacyMember.name,
+              memberPlan: legacyMember.plan,
+              memberPlanId: legacyMember.planId,
+              memberPlanType: legacyMember.planType,
+              memberPremium: legacyMember.premium,
+              memberZip: legacyMember.zipCode,
+              language,
+            }),
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const { reply, error } = await res.json();
+          if (error) throw new Error(error);
+          setMessages((prev) => [...prev, buildBotMessage(reply)]);
+          return reply as string;
+        } else if (authStage === "collecting") {
+          const res = await fetch("/api/auth-chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: history, voiceMode: showVoiceModeRef.current }),
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const { reply, error } = await res.json();
+          if (error) throw new Error(error);
 
-        if (!res.ok) throw new Error("HTTP " + res.status);
+          const rawReply = reply.trim();
+          const verifyFields = parseVerifyToken(rawReply);
 
-        const { reply, error } = await res.json();
-        if (error) throw new Error(error);
+          if (verifyFields) {
+            const verified = verifyMember({
+              name: verifyFields.name ?? "",
+              dob: verifyFields.dob ?? "",
+              memberIdOrSsn: verifyFields.memberIdOrSsn ?? "",
+            });
 
-        setMessages((prev) => [...prev, buildBotMessage(reply)]);
+            if (verified) {
+              setAuthStage("authenticated");
+              setVerifiedMember(verified);
+              onAuthChange?.("authenticated", verified);
+              const firstName = verified.name.split(" ")[0];
+              const welcomeText = `Identity verified — welcome, ${firstName}! How can I help you today? CHIPS: [My benefits] | [Check a claim] | [Find a doctor] | [My OTC balance]`;
+              setMessages([buildBotMessage(welcomeText)]);
+              return welcomeText;
+            } else {
+              setAuthStage("failed");
+              onAuthChange?.("failed", null);
+              const failText = `I'm sorry, I wasn't able to verify your identity with the information provided. Please double-check your details and try again, or call us at 1-800-801-2060 to speak with a live agent who can help you. CHIPS: [Try again]`;
+              setMessages((prev) => [...prev, buildBotMessage(failText)]);
+              return failText;
+            }
+          } else {
+            setMessages((prev) => [...prev, buildBotMessage(rawReply)]);
+            return rawReply;
+          }
+        } else if (authStage === "authenticated" && verifiedMember) {
+          const systemPrompt = buildMockMemberSystemPrompt(verifiedMember, language);
+          const res = await fetch("/api/member-chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: history, systemPrompt }),
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const { reply, error } = await res.json();
+          if (error) throw new Error(error);
+          setMessages((prev) => [...prev, buildBotMessage(reply)]);
+          return reply as string;
+        }
+        return null;
       } catch {
         setMessages((prev) => [...prev, buildBotMessage(strings.errorMsg)]);
+        return null;
       } finally {
         setLoading(false);
       }
     },
-    [messages, loading],
+    [messages, loading, authStage, verifiedMember, isLegacyMode, legacyMember, language, strings.errorMsg, onAuthChange],
   );
 
+  useEffect(() => { handleSendTextRef.current = handleSendText; }, [handleSendText]);
+
   const handleSend = useCallback(() => {
-    const prompt = chipPromptMap[input] ?? input;
-    handleSendText(prompt);
+    handleSendText(chipPromptMap[input] ?? input);
   }, [input, handleSendText, chipPromptMap]);
 
   const handleChipClick = useCallback(
-    (chip: string) => {
-      const prompt = chipPromptMap[chip] ?? chip;
-      handleSendText(prompt);
-    },
+    (chip: string) => handleSendText(chipPromptMap[chip] ?? chip),
     [handleSendText, chipPromptMap],
   );
 
+  const showingMember = authStage === "authenticated" && displayName !== null;
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
+      {showVoiceMode && (
+        <VoiceMode
+          onClose={() => setShowVoiceMode(false)}
+          onSend={handleSendText}
+          language={language}
+        />
+      )}
+
       {/* Top bar */}
       <div className="px-4 sm:px-8 py-5 bg-white border-b border-clover-border flex items-center gap-4 flex-shrink-0 shadow-sm relative">
-        {/* Logo button — mobile only, opens sidebar drawer */}
         <button
           className="sm:hidden w-9 h-9 flex items-center justify-center text-base flex-shrink-0 shadow-sm"
           style={{ background: "#7ECBA5", borderRadius: "50% 6px 50% 6px" }}
@@ -193,35 +284,41 @@ export function Chat({
           </div>
         </div>
 
-        <div className="relative flex-shrink-0">
-          <button
-            onClick={() => setShowMemberCard((v) => !v)}
-            className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-white hover:opacity-90 active:scale-95 transition-all shadow-sm"
-            style={{ background: "#52B788" }}
-            aria-label="View membership card"
-            title={member.name}
-          >
-            {member.initials}
-          </button>
-
-          {/* Member card dropdown */}
-          {showMemberCard && (
-            <>
-              <div className="fixed inset-0 z-20" onClick={() => setShowMemberCard(false)} />
-              <div
-                className="absolute top-[calc(100%+6px)] right-0 z-30 w-60 rounded-xl shadow-xl p-4 border border-white/30"
-                style={{ background: "#52B788" }}
-              >
-                <p className="text-white font-semibold text-[14px] mb-0.5">{member.name}</p>
-                <p className="text-white/60 text-xs font-light">ID: {member.memberId}</p>
-                <div className="mt-2.5 pt-2.5 border-t border-white/20 flex items-center justify-between">
-                  <span className="text-[11px] bg-clover-light text-white px-2 py-0.5 rounded-full font-medium">{member.plan}</span>
-                  <span className="text-[11px] text-white/60">{"⭐".repeat(member.stars)} {member.stars}-Star</span>
+        {showingMember && displayInitials && (
+          <div className="relative flex-shrink-0">
+            <button
+              onClick={() => setShowMemberCard((v) => !v)}
+              className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-white hover:opacity-90 active:scale-95 transition-all shadow-sm"
+              style={{ background: "#52B788" }}
+              aria-label="View membership card"
+              title={displayName ?? ""}
+            >
+              {displayInitials}
+            </button>
+            {showMemberCard && (
+              <>
+                <div className="fixed inset-0 z-20" onClick={() => setShowMemberCard(false)} />
+                <div
+                  className="absolute top-[calc(100%+6px)] right-0 z-30 w-60 rounded-xl shadow-xl p-4 border border-white/30"
+                  style={{ background: "#52B788" }}
+                >
+                  <p className="text-white font-semibold text-[14px] mb-0.5">{displayName}</p>
+                  <p className="text-white/60 text-xs font-light">ID: {displayMemberId}</p>
+                  <div className="mt-2.5 pt-2.5 border-t border-white/20 flex items-center justify-between">
+                    <span className="text-[11px] bg-clover-light text-white px-2 py-0.5 rounded-full font-medium">
+                      {displayPlan}
+                    </span>
+                    {displayStars !== null && (
+                      <span className="text-[11px] text-white/60">
+                        {"⭐".repeat(displayStars)} {displayStars}-Star
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
-        </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Accessibility bar */}
@@ -240,16 +337,29 @@ export function Chat({
           {textSizes[textIdx]}
         </span>
         <button
-          onClick={() =>
-            onTextIdxChange(Math.min(textSizes.length - 1, textIdx + 1))
-          }
+          onClick={() => onTextIdxChange(Math.min(textSizes.length - 1, textIdx + 1))}
           disabled={textIdx === textSizes.length - 1}
           className="text-[16px] w-8 h-8 flex items-center justify-center border-2 rounded-lg transition-all font-sans bg-white border-clover-border text-clover-mid hover:bg-clover-pale hover:border-clover-light hover:text-clover-green disabled:opacity-30 disabled:cursor-not-allowed font-bold"
         >
           +
         </button>
 
-        {/* Language dropdown */}
+        {/* Voice mode button */}
+        <button
+          type="button"
+          onClick={() => setShowVoiceMode(true)}
+          title="Start voice conversation"
+          aria-label="Start voice conversation"
+          className="w-8 h-8 flex items-center justify-center border-2 rounded-lg transition-all bg-white border-clover-border text-clover-muted hover:border-clover-light hover:text-clover-green hover:bg-clover-pale"
+        >
+          <svg viewBox="0 0 24 24" className="w-[15px] h-[15px] stroke-current fill-none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+            <line x1="12" y1="19" x2="12" y2="23" />
+            <line x1="8" y1="23" x2="16" y2="23" />
+          </svg>
+        </button>
+
         <div className="ml-auto relative">
           <select
             value={language}
@@ -281,7 +391,7 @@ export function Chat({
 
       {/* Messages */}
       <div
-        className={`flex-1 overflow-y-auto px-4 sm:px-7 pt-5 sm:pt-7 pb-5 flex flex-col gap-[18px] scroll-smooth [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-clover-border [&::-webkit-scrollbar-thumb]:rounded`}
+        className="flex-1 overflow-y-auto px-4 sm:px-7 pt-5 sm:pt-7 pb-5 flex flex-col gap-[18px] scroll-smooth [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-clover-border [&::-webkit-scrollbar-thumb]:rounded"
         style={{ fontSize: textSizes[textIdx] }}
       >
         {messages.map((msg) => (
@@ -289,11 +399,7 @@ export function Chat({
             key={msg.id}
             message={msg}
             onChipClick={handleChipClick}
-            initials={member.name
-              .split(" ")
-              .map((w) => w[0])
-              .join("")
-              .toUpperCase()}
+            initials={displayInitials ?? "?"}
             escalate={{
               text: strings.escalateText,
               call: strings.escalateCall,

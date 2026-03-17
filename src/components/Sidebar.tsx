@@ -2,18 +2,29 @@
 
 import { PHONE_NUMBER, UI_STRINGS } from "@/lib/constants";
 import type { Language } from "@/lib/constants";
-import type { Member } from "@/types";
+import type { AuthStage } from "@/types";
+import type { MockMember } from "@/lib/mockMembers";
 
 interface SidebarProps {
   onQuickAction: (prompt: string) => void;
-  member: Member;
+  authStage: AuthStage;
+  member: MockMember | null;
   language?: Language;
   onClose?: () => void;
   fontSize?: string;
 }
 
-export function Sidebar({ onQuickAction, member, language = "en", onClose, fontSize = "16px" }: SidebarProps) {
+export function Sidebar({
+  onQuickAction,
+  authStage,
+  member,
+  language = "en",
+  onClose,
+  fontSize = "16px",
+}: SidebarProps) {
   const strings = UI_STRINGS[language];
+  const authenticated = authStage === "authenticated" && member !== null;
+
   return (
     <aside className="w-[280px] h-full bg-clover-green flex flex-col flex-shrink-0 relative overflow-hidden">
       {/* Decorative circles */}
@@ -54,42 +65,63 @@ export function Sidebar({ onQuickAction, member, language = "en", onClose, fontS
 
       {/* Scrollable middle */}
       <div className="flex-1 overflow-y-auto relative z-20">
-        {/* Member card */}
-        <div className="mx-4 my-5 bg-white/10 border border-white/20 rounded-xl p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
-          <p className="text-white/50 text-[10px] uppercase tracking-widest font-medium mb-1.5">
-            {strings.signedInAs}
-          </p>
-          <p className="text-white font-semibold mb-0.5" style={{ fontSize }}>{member.name}</p>
-          <p className="text-white/60 text-xs font-light">{strings.memberId}: {member.memberId}</p>
-          <div className="mt-2.5 pt-2.5 border-t border-white/10 flex items-center justify-between">
-            <span className="text-[11px] bg-clover-light text-white px-2 py-0.5 rounded-full font-medium">
-              {member.plan}
-            </span>
-            <span className="text-[11px] text-white/60">
-              {"⭐".repeat(member.stars)} {member.stars}-Star Plan
-            </span>
-          </div>
-        </div>
-
-        {/* Quick actions */}
-        <p className="px-4 pb-2 text-[10px] text-white/50 uppercase tracking-widest font-medium">
-          {strings.commonTopics}
-        </p>
-
-        <nav className="flex flex-col gap-0.5 pb-4">
-          {strings.quickActions.map(({ icon, label, prompt }) => (
-            <button
-              key={label}
-              onClick={() => onQuickAction(prompt)}
-              className="flex items-center gap-2.5 px-4 py-2.5 mx-2 rounded-lg hover:bg-white/15 active:bg-white/20 transition-all text-left w-[calc(100%-16px)] group"
-            >
-              <div className="w-7 h-7 bg-white/[0.15] rounded-md flex items-center justify-center text-sm flex-shrink-0 group-hover:bg-white/25 transition-colors">
-                {icon}
+        {authenticated && member ? (
+          <>
+            {/* Member card */}
+            <div className="mx-4 my-5 bg-white/10 border border-white/20 rounded-xl p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
+              <p className="text-white/50 text-[10px] uppercase tracking-widest font-medium mb-1.5">
+                {strings.signedInAs}
+              </p>
+              <p className="text-white font-semibold mb-0.5" style={{ fontSize }}>{member.name}</p>
+              <p className="text-white/60 text-xs font-light">{strings.memberId}: {member.memberId}</p>
+              <div className="mt-2.5 pt-2.5 border-t border-white/10 flex items-center justify-between">
+                <span className="text-[11px] bg-clover-light text-white px-2 py-0.5 rounded-full font-medium">
+                  {member.plan}
+                </span>
+                <span className="text-[11px] text-white/60">
+                  {"⭐".repeat(member.stars)} {member.stars}-Star Plan
+                </span>
               </div>
-              <span className="text-white/90 font-normal group-hover:text-white transition-colors" style={{ fontSize }}>{label}</span>
-            </button>
-          ))}
-        </nav>
+            </div>
+
+            {/* Quick actions */}
+            <p className="px-4 pb-2 text-[10px] text-white/50 uppercase tracking-widest font-medium">
+              {strings.commonTopics}
+            </p>
+            <nav className="flex flex-col gap-0.5 pb-4">
+              {strings.quickActions.map(({ icon, label, prompt }) => (
+                <button
+                  key={label}
+                  onClick={() => onQuickAction(prompt)}
+                  className="flex items-center gap-2.5 px-4 py-2.5 mx-2 rounded-lg hover:bg-white/15 active:bg-white/20 transition-all text-left w-[calc(100%-16px)] group"
+                >
+                  <div className="w-7 h-7 bg-white/[0.15] rounded-md flex items-center justify-center text-sm flex-shrink-0 group-hover:bg-white/25 transition-colors">
+                    {icon}
+                  </div>
+                  <span className="text-white/90 font-normal group-hover:text-white transition-colors" style={{ fontSize }}>{label}</span>
+                </button>
+              ))}
+            </nav>
+          </>
+        ) : (
+          /* Locked state during auth */
+          <div className="mx-4 my-5 bg-white/10 border border-white/20 rounded-xl p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-white/40 text-lg">🔒</span>
+              <p className="text-white/40 text-[11px] uppercase tracking-widest font-medium">
+                {authStage === "verifying" ? "Verifying identity…" : "Identity verification required"}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <div className="h-3 bg-white/10 rounded w-3/4" />
+              <div className="h-2.5 bg-white/[0.07] rounded w-1/2" />
+              <div className="mt-3 pt-3 border-t border-white/10 flex gap-2">
+                <div className="h-5 bg-white/10 rounded-full w-16" />
+                <div className="h-5 bg-white/[0.07] rounded w-12" />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Footer CTA — pinned */}
