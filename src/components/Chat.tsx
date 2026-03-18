@@ -75,17 +75,12 @@ export function Chat({
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState("general");
-  const [showMemberCard, setShowMemberCard] = useState(false);
   const [showVoiceMode, setShowVoiceMode] = useState(false);
   const [pendingLang, setPendingLang] = useState<Language | null>(null);
 
-  const displayName = isLegacyMode ? legacyMember!.name : verifiedMember?.name ?? null;
   const displayInitials = isLegacyMode
     ? legacyMember!.initials
     : verifiedMember?.name.split(" ").map((w) => w[0]).join("").toUpperCase() ?? null;
-  const displayMemberId = isLegacyMode ? legacyMember!.memberId : verifiedMember?.memberId ?? null;
-  const displayPlan = isLegacyMode ? legacyMember!.plan : verifiedMember?.plan ?? null;
-  const displayStars = isLegacyMode ? legacyMember!.stars : verifiedMember?.stars ?? null;
 
   const showVoiceModeRef = useRef(showVoiceMode);
   useEffect(() => { showVoiceModeRef.current = showVoiceMode; }, [showVoiceMode]);
@@ -255,7 +250,6 @@ export function Chat({
     [handleSendText, chipPromptMap],
   );
 
-  const showingMember = authStage === "authenticated" && displayName !== null;
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -339,41 +333,6 @@ export function Chat({
           </button>
         )}
 
-        {showingMember && displayInitials && (
-          <div className="relative flex-shrink-0">
-            <button
-              onClick={() => setShowMemberCard((v) => !v)}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold text-white hover:opacity-90 active:scale-95 transition-all shadow-sm"
-              style={{ background: "#52B788" }}
-              aria-label="View membership card"
-              title={displayName ?? ""}
-            >
-              {displayInitials}
-            </button>
-            {showMemberCard && (
-              <>
-                <div className="fixed inset-0 z-20" onClick={() => setShowMemberCard(false)} />
-                <div
-                  className="absolute top-[calc(100%+6px)] right-0 z-30 w-60 rounded-xl shadow-xl p-4 border border-white/30"
-                  style={{ background: "#52B788" }}
-                >
-                  <p className="text-white font-semibold text-[14px] mb-0.5">{displayName}</p>
-                  <p className="text-white/60 text-xs font-light">ID: {displayMemberId}</p>
-                  <div className="mt-2.5 pt-2.5 border-t border-white/20 flex items-center justify-between">
-                    <span className="text-[11px] bg-clover-light text-white px-2 py-0.5 rounded-full font-medium">
-                      {displayPlan}
-                    </span>
-                    {displayStars !== null && (
-                      <span className="text-[11px] text-white/60">
-                        {"⭐".repeat(displayStars)} {displayStars}-Star
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Accessibility bar */}

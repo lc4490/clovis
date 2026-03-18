@@ -7,8 +7,7 @@ import type { Language } from "@/lib/constants";
 import type { AuthStage } from "@/types";
 import type { MockMember } from "@/lib/mockMembers";
 
-const WIDGET_TEXT_SIZES = ["14px", "16px", "19px", "22px"];
-const FULL_TEXT_SIZES = ["16px", "19px", "22px", "25px", "28px"];
+const TEXT_SIZES = ["14px", "16px", "19px", "22px", "25px", "28px"];
 
 export function FloatingWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -68,7 +67,7 @@ export function FloatingWidget() {
                   member={member}
                   language={language}
                   onClose={() => setSidebarOpen(false)}
-                  fontSize={FULL_TEXT_SIZES[textIdx]}
+                  fontSize={TEXT_SIZES[textIdx]}
                 />
               </div>
             </div>
@@ -82,7 +81,7 @@ export function FloatingWidget() {
                 authStage={authStage}
                 member={member}
                 language={language}
-                fontSize={FULL_TEXT_SIZES[textIdx]}
+                fontSize={TEXT_SIZES[textIdx]}
               />
             </div>
           )}
@@ -96,7 +95,7 @@ export function FloatingWidget() {
             onCollapse={isFullscreen ? handleCollapse : undefined}
             textIdx={textIdx}
             onTextIdxChange={setTextIdx}
-            textSizes={isFullscreen ? FULL_TEXT_SIZES : WIDGET_TEXT_SIZES}
+            textSizes={TEXT_SIZES}
             onAuthChange={handleAuthChange}
           />
         </div>
