@@ -67,7 +67,7 @@ export const MOCK_MEMBERS: MockMember[] = [
         memberOwes: 1400,
         denialReason:
           "Prior authorization was not obtained before the procedure",
-        appealDeadline: "03/03/2026",
+        appealDeadline: "04/17/2026",
       },
       {
         id: "CLM-2026-0220",
@@ -124,7 +124,7 @@ export const MOCK_MEMBERS: MockMember[] = [
         memberOwes: 224,
         denialReason:
           "Lab work was performed at an out-of-network facility without a referral",
-        appealDeadline: "02/15/2026",
+        appealDeadline: "04/15/2026",
       },
       {
         id: "CLM-2026-0225",
