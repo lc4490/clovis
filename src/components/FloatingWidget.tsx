@@ -7,13 +7,13 @@ import type { Language } from "@/lib/constants";
 import type { AuthStage } from "@/types";
 import type { MockMember } from "@/lib/mockMembers";
 
-const TEXT_SIZES = ["14px", "16px", "19px", "22px", "25px", "28px"];
+const TEXT_SIZES = ["16px", "19px", "22px", "25px", "28px"];
 
 export function FloatingWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [language, setLanguage] = useState<Language>("en");
-  const [textIdx, setTextIdx] = useState(1);
+  const [textIdx, setTextIdx] = useState(0);
   const [authStage, setAuthStage] = useState<AuthStage>("collecting");
   const [member, setMember] = useState<MockMember | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -33,7 +33,12 @@ export function FloatingWidget() {
     sendQuickRef.current(prompt);
   }, []);
 
-  const handleExpand = useCallback(() => setIsFullscreen(true), []);
+  const handleToggle = useCallback(() => setIsOpen((v) => !v), []);
+
+  const handleExpand = useCallback(() => {
+    setIsFullscreen(true);
+  }, []);
+
   const handleCollapse = useCallback(() => {
     setIsFullscreen(false);
     setIsOpen(true);
@@ -41,7 +46,6 @@ export function FloatingWidget() {
 
   return (
     <>
-      {/* Single Chat instance — container changes shape between widget and fullscreen */}
       {(isOpen || isFullscreen) && (
         <div
           className={
@@ -101,10 +105,9 @@ export function FloatingWidget() {
         </div>
       )}
 
-      {/* FAB — hidden in fullscreen */}
       {!isFullscreen && (
         <button
-          onClick={() => setIsOpen((v) => !v)}
+          onClick={handleToggle}
           className="fixed bottom-4 right-4 sm:right-6 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
           style={{ background: "#52B788" }}
           aria-label={isOpen ? "Close chat" : "Open Ask Clovis"}

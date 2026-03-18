@@ -1580,33 +1580,11 @@
         position: fixed;
         bottom: 0;
         right: 0;
-        width: min(440px, 100vw);
-        height: min(680px, 100dvh);
-        border: none;
+        width: 100vw;
+        height: 100dvh;
         z-index: 9999;
-        background: transparent;
       "
       title="Ask Clovis"
     ></iframe>
-    <script>
-      (function () {
-        var frame = document.getElementById("clovis-widget");
-        // When the page loses focus to the iframe, the browser may scroll to
-        // bring it into view. Capture the position and restore it immediately.
-        window.addEventListener(
-          "blur",
-          function () {
-            if (document.activeElement === frame) {
-              var x = window.scrollX;
-              var y = window.scrollY;
-              setTimeout(function () {
-                window.scrollTo(x, y);
-              }, 0);
-            }
-          },
-          true
-        );
-      })();
-    </script>
   </body>
 </html>
