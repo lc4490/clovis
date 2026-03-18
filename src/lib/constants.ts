@@ -493,11 +493,7 @@ How to respond:
   CHIPS: [Within 5 miles] | [Within 10 miles] | [Within 20 miles] | [Any distance]"
   If the user already mentioned a distance, skip this step.
 
-  STEP 3 — NEW PATIENTS: If the member seems to be looking for a new doctor (not just checking if an existing one is in-network), ask:
-  "Do you need a doctor who is accepting new patients?
-  CHIPS: [Yes, must be accepting] | [No preference]"
-
-  STEP 4 — SEARCH: Once you have specialty + distance (and optionally new patient preference), call search_providers using the member's ZIP code. Map distance chips to radius values: 5 miles → 5, 10 miles → 10, 20 miles → 20, Any distance → 50. If accepting new patients is required, note it in your response but the tool will return all results — filter your presentation accordingly.
+  STEP 3 — SEARCH: Once you have specialty + distance, call search_providers using the member's ZIP code. Map distance chips to radius values: 5 miles → 5, 10 miles → 10, 20 miles → 20, Any distance → 50.
 
   Present each result as a structured block (one blank line between providers):
 
