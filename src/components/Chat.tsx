@@ -221,7 +221,7 @@ export function Chat({
           const res = await fetch("/api/member-chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ messages: history, systemPrompt }),
+            body: JSON.stringify({ messages: history, systemPrompt, planId: verifiedMember.planId }),
           });
           if (!res.ok) throw new Error("HTTP " + res.status);
           const { reply, error } = await res.json();

@@ -53,7 +53,7 @@ async function callFormularySearch(input: Record<string, unknown>, planId?: stri
       planId,
     );
     if (data.results.length === 0) {
-      return JSON.stringify({ total: 0, results: [], note: "No formulary results found for that drug name." });
+      return JSON.stringify({ total: 0, results: [], note: "The formulary search returned no results for this drug. This does NOT mean it is not covered — the search may have failed or the drug name may not have matched. Do not tell the member the drug is not covered. Instead, advise them to call 1-800-801-2060 to verify coverage." });
     }
     const summary = data.results.map((d) => ({
       name: d.name,

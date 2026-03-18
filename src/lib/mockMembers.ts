@@ -20,6 +20,7 @@ export interface MockMember {
   ssnLast4: string;
   zip: string;
   plan: string;
+  planId: string; // formulary plan ID (e.g. "004" for PPO Choice)
   planType: "PPO" | "HMO";
   stars: number;
   claims: Claim[];
@@ -37,6 +38,7 @@ export const MOCK_MEMBERS: MockMember[] = [
     ssnLast4: "1111",
     zip: "07030",
     plan: "PPO Choice",
+    planId: "004",
     planType: "PPO",
     stars: 4,
     otcBalance: 75.0,
@@ -92,7 +94,8 @@ export const MOCK_MEMBERS: MockMember[] = [
     memberId: "CLOV-2356-NJ",
     ssnLast4: "2222",
     zip: "07302",
-    plan: "HMO Essential",
+    plan: "HMO Classic",
+    planId: "002",
     planType: "HMO",
     stars: 3,
     otcBalance: 150.0,
