@@ -2,13 +2,13 @@
 
 import { PHONE_NUMBER, UI_STRINGS } from "@/lib/constants";
 import type { Language } from "@/lib/constants";
-import type { AuthStage } from "@/types";
+import type { AuthStage, Member } from "@/types";
 import type { MockMember } from "@/lib/mockMembers";
 
 interface SidebarProps {
   onQuickAction: (prompt: string) => void;
   authStage: AuthStage;
-  member: MockMember | null;
+  member: MockMember | Member | null;
   language?: Language;
   onClose?: () => void;
   fontSize?: string;

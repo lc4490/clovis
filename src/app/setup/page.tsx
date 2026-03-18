@@ -48,7 +48,7 @@ export default function SetupRoute() {
             <Sidebar
               onQuickAction={handleSidebarAction}
               authStage={authStage}
-              member={null}
+              member={member}
               language={language}
               onClose={() => setSidebarOpen(false)}
               fontSize={TEXT_SIZES[textIdx]}
@@ -61,7 +61,7 @@ export default function SetupRoute() {
         <Sidebar
           onQuickAction={handleSidebarAction}
           authStage={authStage}
-          member={null}
+          member={member}
           language={language}
           fontSize={TEXT_SIZES[textIdx]}
         />
