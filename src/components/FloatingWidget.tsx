@@ -2,7 +2,6 @@
 
 import { useState, useRef, useCallback } from "react";
 import { Chat } from "./Chat";
-import { MEMBER } from "@/lib/constants";
 import type { Language } from "@/lib/constants";
 
 const TEXT_SIZES = ["14px", "16px", "19px", "22px"];
@@ -30,7 +29,6 @@ export function FloatingWidget() {
         >
           <Chat
             onQuickAction={registerSendQuick}
-            member={MEMBER}
             language={language}
             onLanguageChange={setLanguage}
             textIdx={textIdx}

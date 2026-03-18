@@ -97,7 +97,7 @@ export const MOCK_MEMBERS: MockMember[] = [
     plan: "HMO Classic",
     planId: "002",
     planType: "HMO",
-    stars: 3,
+    stars: 4,
     otcBalance: 150.0,
     rewardsEarned: 200,
     rewardsTotal: 400,
