@@ -58,7 +58,7 @@ export const MOCK_MEMBERS: MockMember[] = [
       },
       {
         id: "CLM-2025-1203",
-        provider: "New Jersey Radiology Center",
+        provider: "Garden State Healthcare Associates",
         service: "Knee MRI",
         date: "12/03/2025",
         status: "PARTIALLY_DENIED",
