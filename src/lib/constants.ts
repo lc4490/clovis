@@ -103,14 +103,14 @@ export const UI_STRINGS: Record<
     memberId: "Member ID",
     quickActions: [
       {
-        icon: "🦷",
-        label: "Dental & Vision",
-        prompt: "What does my plan cover for dental?",
-      },
-      {
         icon: "📋",
         label: "Check a Claim",
         prompt: "How do I check the status of a claim?",
+      },
+      {
+        icon: "🦷",
+        label: "Dental & Vision",
+        prompt: "What does my plan cover for dental?",
       },
       {
         icon: "👩‍⚕️",
@@ -156,7 +156,7 @@ export const UI_STRINGS: Record<
     authWelcome:
       "Hello! I'm Clovis, your Clover Health assistant. 👋\n\nBefore I can access your account details, I need to verify your identity — it'll only take a moment.\n\nCould you please start by telling me your **full name**?",
     authVerified: (firstName: string) =>
-      `Identity verified — welcome, ${firstName}! How can I help you today? CHIPS: [My benefits] | [Check a claim] | [Find a doctor] | [My OTC balance]`,
+      `Identity verified — welcome, ${firstName}! How can I help you today? CHIPS: [My benefits] | [My providers] | [My claims] | [Prior authorization]`,
     authFailed:
       "I'm sorry, I wasn't able to verify your identity with the information provided. Please double-check your details and try again, or call us at 1-800-801-2060 to speak with a live agent. CHIPS: [Try again]",
     setup: {
@@ -219,14 +219,14 @@ export const UI_STRINGS: Record<
     memberId: "ID de Miembro",
     quickActions: [
       {
-        icon: "🦷",
-        label: "Dental y Visión",
-        prompt: "¿Qué cubre mi plan para dental?",
-      },
-      {
         icon: "📋",
         label: "Ver Reclamación",
         prompt: "¿Cómo verifico el estado de una reclamación?",
+      },
+      {
+        icon: "🦷",
+        label: "Dental y Visión",
+        prompt: "¿Qué cubre mi plan para dental?",
       },
       {
         icon: "👩‍⚕️",
@@ -272,7 +272,7 @@ export const UI_STRINGS: Record<
     authWelcome:
       "¡Hola! Soy Clovis, su asistente de Clover Health. 👋\n\nAntes de acceder a los detalles de su cuenta, necesito verificar su identidad — solo tomará un momento.\n\n¿Podría comenzar diciéndome su **nombre completo**?",
     authVerified: (firstName: string) =>
-      `Identidad verificada — ¡bienvenido/a, ${firstName}! ¿En qué puedo ayudarle hoy? CHIPS: [Mis beneficios] | [Ver una reclamación] | [Buscar médico] | [Mi saldo OTC]`,
+      `Identidad verificada — ¡bienvenido/a, ${firstName}! ¿En qué puedo ayudarle hoy? CHIPS: [Mis beneficios] | [Mis proveedores] | [Mis reclamaciones] | [Autorización previa]`,
     authFailed:
       "Lo siento, no pude verificar su identidad con la información proporcionada. Por favor, revise sus datos e inténtelo de nuevo, o llame al 1-800-801-2060 para hablar con un agente en vivo. CHIPS: [Intentar de nuevo]",
     setup: {
@@ -322,8 +322,8 @@ export const UI_STRINGS: Record<
     memberPortal: "会员门户",
     memberId: "会员编号",
     quickActions: [
-      { icon: "🦷", label: "牙科与视力", prompt: "我的计划涵盖哪些牙科服务？" },
       { icon: "📋", label: "查看理赔", prompt: "如何查看理赔状态？" },
+      { icon: "🦷", label: "牙科与视力", prompt: "我的计划涵盖哪些牙科服务？" },
       { icon: "👩‍⚕️", label: "查找医生", prompt: "我的医生在网络内吗？" },
       { icon: "💊", label: "OTC津贴", prompt: "介绍一下OTC津贴福利" },
       { icon: "📝", label: "预先授权", prompt: "什么是预先授权，如何申请？" },
@@ -344,7 +344,7 @@ export const UI_STRINGS: Record<
     authWelcome:
       "您好！我是Clovis，您的Clover Health助手。👋\n\n在访问您的账户详情之前，我需要验证您的身份 — 只需片刻。\n\n请问您能先告诉我您的**全名**吗？",
     authVerified: (firstName: string) =>
-      `身份已验证 — 欢迎，${firstName}！今天有什么可以帮您的？ CHIPS: [我的福利] | [查看理赔] | [查找医生] | [我的OTC余额]`,
+      `身份已验证 — 欢迎，${firstName}！今天有什么可以帮您的？ CHIPS: [我的福利] | [我的医生] | [我的理赔] | [预先授权]`,
     authFailed:
       "很抱歉，我无法使用您提供的信息验证您的身份。请仔细检查您的信息并重试，或拨打 1-800-801-2060 与客服代表通话。 CHIPS: [重试]",
     setup: {

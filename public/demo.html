@@ -1574,18 +1574,39 @@
          Served from your Vercel deployment
     ════════════════════════════════════════ -->
     <iframe
+      id="clovis-widget"
       src="https://ask-clovis.vercel.app/widget"
       style="
         position: fixed;
         bottom: 0;
         right: 0;
-        width: 440px;
-        height: 680px;
+        width: min(440px, 100vw);
+        height: min(680px, 100dvh);
         border: none;
         z-index: 9999;
         background: transparent;
       "
       title="Ask Clovis"
     ></iframe>
+    <script>
+      (function () {
+        var frame = document.getElementById("clovis-widget");
+        // When the page loses focus to the iframe, the browser may scroll to
+        // bring it into view. Capture the position and restore it immediately.
+        window.addEventListener(
+          "blur",
+          function () {
+            if (document.activeElement === frame) {
+              var x = window.scrollX;
+              var y = window.scrollY;
+              setTimeout(function () {
+                window.scrollTo(x, y);
+              }, 0);
+            }
+          },
+          true
+        );
+      })();
+    </script>
   </body>
 </html>
