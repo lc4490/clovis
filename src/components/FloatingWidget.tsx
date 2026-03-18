@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Chat } from "./Chat";
 import { Sidebar } from "./Sidebar";
 import type { Language } from "@/lib/constants";
@@ -32,6 +32,11 @@ export function FloatingWidget() {
     setSidebarOpen(false);
     sendQuickRef.current(prompt);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = isFullscreen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [isFullscreen]);
 
   const handleToggle = useCallback(() => setIsOpen((v) => !v), []);
 
