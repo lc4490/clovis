@@ -100,8 +100,12 @@ export function Chat({
 
   function applyLanguageChange(lang: Language) {
     onLanguageChange(lang);
-    if (authStage !== "authenticated") setMessages([makeAuthWelcome(UI_STRINGS[lang].authWelcome)]);
-    else setMessages([]);
+    if (authStage !== "authenticated") {
+      setMessages([makeAuthWelcome(UI_STRINGS[lang].authWelcome)]);
+    } else {
+      const firstName = verifiedMember?.name.split(" ")[0] ?? "";
+      setMessages([buildBotMessage(UI_STRINGS[lang].authVerified(firstName))]);
+    }
     setInput("");
     setPendingLang(null);
   }
