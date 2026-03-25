@@ -4,7 +4,6 @@ import { useState } from "react";
 import { LANGUAGES, UI_STRINGS } from "@/lib/constants";
 import type { Language } from "@/lib/constants";
 import type { Member, CloverPlan } from "@/types";
-import { FloatingWidget } from "./FloatingWidget";
 
 interface SetupPageProps {
   onComplete: (member: Member) => void;
@@ -346,7 +345,20 @@ export function SetupPage({
           </form>
         </div>
       </div>
-      <FloatingWidget />
+      <iframe
+        id="clovis-widget"
+        src="https://ask-clovis.vercel.app/widget"
+        style={{
+          position: "fixed",
+          bottom: 0,
+          right: 0,
+          width: "100vw",
+          height: "100dvh",
+          zIndex: 9999,
+          border: "none",
+        }}
+        title="Ask Clovis"
+      />
     </div>
   );
 }
